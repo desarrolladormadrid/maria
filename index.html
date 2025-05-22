@@ -810,13 +810,13 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
             const preguntaLength = pregunta.length;
 
             if (preguntaLength > 40) { 
-                interestChange = 20; // Sube 20 puntos por mensaje largo y elaborado
+                interestChange = 10; // Sube 10 puntos por mensaje largo y elaborado
             } else if (preguntaLength > 15) { 
-                interestChange = 10; // Sube 10 puntos por mensaje decente
+                interestChange = 3; // Sube 3 puntos por mensaje decente
             } else if (preguntaLength > 0) { 
-                interestChange = -5;  // Baja 5 puntos por mensaje corto
+                interestChange = -3;  // Baja 3 puntos por mensaje corto
             } else { 
-                interestChange = -10; 
+                interestChange = -5; 
             }
 
             // Modificadores basados en el interés actual
