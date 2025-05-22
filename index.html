@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charlando con María 🔥 (Personalidad Ajustable)</title>
+    <title>Charlando con María 🔥 (Personalidad Ajustable v2)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            overflow-x: hidden; 
         }
         #chatLogContainer::-webkit-scrollbar {
             width: 8px;
@@ -28,25 +29,25 @@
             box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2); 
         }
         .slider-container {
-            margin-bottom: 0.75rem; /* 12px */
+            margin-bottom: 0.75rem; 
         }
         .slider-label {
             display: block;
-            font-size: 0.875rem; /* 14px */
+            font-size: 0.875rem; 
             font-weight: 500;
-            color: #ec4899; /* pink-500 */
-            margin-bottom: 0.25rem; /* 4px */
+            color: #ec4899; 
+            margin-bottom: 0.25rem; 
         }
         .slider-value {
-            font-size: 0.75rem; /* 12px */
-            color: #c026d3; /* fuchsia-600 */
+            font-size: 0.75rem; 
+            color: #c026d3; 
         }
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
             height: 8px;
-            background: #fbcfe8; /* pink-200 */
+            background: #fbcfe8; 
             border-radius: 5px;
             outline: none;
         }
@@ -55,7 +56,7 @@
             appearance: none;
             width: 20px;
             height: 20px;
-            background: #ec4899; /* pink-500 */
+            background: #ec4899; 
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid white;
@@ -63,16 +64,62 @@
         input[type="range"]::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: #ec4899; /* pink-500 */
+            background: #ec4899; 
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid white;
         }
+        #confettiCanvas {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none; 
+            z-index: 9999; 
+        }
+        /* Estilos para el acordeón */
+        #accordionHeader {
+            cursor: pointer;
+            padding: 0.75rem 1rem; /* 12px 16px */
+            background-color: #fce4ec; /* pink-100 */
+            border: 1px solid #fbcfe8; /* pink-200 */
+            border-radius: 0.5rem; /* 8px */
+            transition: background-color 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #accordionHeader:hover {
+            background-color: #f9a8d4; /* pink-300 */
+        }
+        #accordionBody {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease-out;
+            padding: 0 1rem; /* Padding horizontal para cuando esté abierto */
+            border-left: 1px solid #fbcfe8;
+            border-right: 1px solid #fbcfe8;
+            border-bottom: 1px solid #fbcfe8;
+            border-bottom-left-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+        #accordionBody.open {
+            max-height: 1000px; /* Un valor suficientemente grande */
+            padding: 1rem; /* Padding completo cuando esté abierto */
+        }
+        .accordion-arrow {
+            transition: transform 0.3s ease;
+        }
+        .accordion-arrow.open {
+            transform: rotate(180deg);
+        }
     </style>
 </head>
 <body class="bg-pink-50 flex flex-col items-center justify-center min-h-screen p-4 text-gray-800">
+    <canvas id="confettiCanvas"></canvas>
 
-    <div class="container bg-white shadow-xl rounded-xl p-6 md:p-10 w-full max-w-3xl">
+    <div class="container bg-white shadow-xl rounded-xl p-6 md:p-10 w-full max-w-3xl relative z-10">
         <h1 class="text-3xl md:text-4xl font-bold text-pink-500 text-center mb-3">
             Soy María... ¿Y tú? 🔥
         </h1>
@@ -89,54 +136,68 @@
             Llevamos juntos: <span id="timer">00:00</span> ...y subiendo. 😏
         </div>
 
-        <div id="personalityControls" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mb-6 p-4 border border-pink-200 rounded-lg bg-pink-50 shadow">
-            <h3 class="col-span-1 sm:col-span-2 text-lg font-semibold text-pink-600 mb-3 text-center">Ajusta a tu María Ideal:</h3>
-            
-            <div class="slider-container">
-                <label for="descaroSlider" class="slider-label">Descaro/Vulgaridad: <span id="descaroValue" class="slider-value">100</span></label>
-                <input type="range" id="descaroSlider" min="0" max="100" value="100" class="w-full">
+        <div class="slider-container col-span-1 sm:col-span-2 mb-6">
+            <label for="interestMeter" class="slider-label text-center">Interés de María: <span id="interestValueText" class="slider-value">50</span>/100</label>
+            <div class="w-full bg-gray-200 rounded-full h-3.5 dark:bg-gray-700 shadow-inner">
+                <div id="interestProgressBar" class="bg-pink-500 h-3.5 rounded-full transition-all duration-300 ease-out" style="width: 50%"></div>
             </div>
-            <div class="slider-container">
-                <label for="seduccionSlider" class="slider-label">Seducción/Coqueteo: <span id="seduccionValue" class="slider-value">100</span></label>
-                <input type="range" id="seduccionSlider" min="0" max="100" value="100" class="w-full">
-            </div>
-            <div class="slider-container">
-                <label for="dominanciaSlider" class="slider-label">Dominancia: <span id="dominanciaValue" class="slider-value">80</span></label>
-                <input type="range" id="dominanciaSlider" min="0" max="100" value="80" class="w-full">
-            </div>
-            <div class="slider-container">
-                <label for="juguetonaSlider" class="slider-label">Juguetona/Traviesa: <span id="juguetonaValue" class="slider-value">90</span></label>
-                <input type="range" id="juguetonaSlider" min="0" max="100" value="90" class="w-full">
-            </div>
-            <div class="slider-container">
-                <label for="franquezaSlider" class="slider-label">Franqueza (sin filtros): <span id="franquezaValue" class="slider-value">100</span></label>
-                <input type="range" id="franquezaSlider" min="0" max="100" value="100" class="w-full">
-            </div>
-            <div class="slider-container">
-                <label for="explicitezSexualSlider" class="slider-label">Explicitez Sexual: <span id="explicitezSexualValue" class="slider-value">100</span></label>
-                <input type="range" id="explicitezSexualSlider" min="0" max="100" value="100" class="w-full">
-            </div>
-            <div class="slider-container">
-                <label for="nostalgiaOcultaSlider" class="slider-label">Nostalgia/Dulzura Oculta: <span id="nostalgiaOcultaValue" class="slider-value">20</span></label>
-                <input type="range" id="nostalgiaOcultaSlider" min="0" max="100" value="20" class="w-full">
-            </div>
-            <div class="slider-container">
-                <label for="impacienciaSlider" class="slider-label">Impaciencia/Acción: <span id="impacienciaValue" class="slider-value">90</span></label>
-                <input type="range" id="impacienciaSlider" min="0" max="100" value="90" class="w-full">
-            </div>
-            <div class="slider-container">
-                <label for="provocacionSlider" class="slider-label">Nivel de Provocación: <span id="provocacionValue" class="slider-value">100</span></label>
-                <input type="range" id="provocacionSlider" min="0" max="100" value="100" class="w-full">
-            </div>
-            <div class="slider-container">
-                <label for="usoEmojisSlider" class="slider-label">Intensidad Emojis: <span id="usoEmojisValue" class="slider-value">70</span></label>
-                <input type="range" id="usoEmojisSlider" min="0" max="100" value="70" class="w-full">
+        </div>
+
+        <div class="mb-6">
+            <button id="accordionHeader" class="w-full text-left text-pink-700 font-semibold">
+                <span>Ajustar Personalidad de María</span>
+                <span class="accordion-arrow float-right">▼</span>
+            </button>
+            <div id="accordionBody" class="bg-pink-50">
+                <div id="personalityControls" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 py-4">
+                    <h3 class="col-span-1 sm:col-span-2 text-lg font-semibold text-pink-600 mb-1 text-center">Modifica a tu María Ideal:</h3>
+                    <div class="slider-container">
+                        <label for="descaroSlider" class="slider-label">Descaro/Vulgaridad: <span id="descaroValue" class="slider-value">100</span></label>
+                        <input type="range" id="descaroSlider" min="0" max="100" value="100" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="seduccionSlider" class="slider-label">Seducción/Coqueteo: <span id="seduccionValue" class="slider-value">100</span></label>
+                        <input type="range" id="seduccionSlider" min="0" max="100" value="100" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="dominanciaSlider" class="slider-label">Dominancia: <span id="dominanciaValue" class="slider-value">80</span></label>
+                        <input type="range" id="dominanciaSlider" min="0" max="100" value="80" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="juguetonaSlider" class="slider-label">Juguetona/Traviesa: <span id="juguetonaValue" class="slider-value">90</span></label>
+                        <input type="range" id="juguetonaSlider" min="0" max="100" value="90" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="franquezaSlider" class="slider-label">Franqueza (sin filtros): <span id="franquezaValue" class="slider-value">100</span></label>
+                        <input type="range" id="franquezaSlider" min="0" max="100" value="100" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="explicitezSexualSlider" class="slider-label">Explicitez Sexual: <span id="explicitezSexualValue" class="slider-value">100</span></label>
+                        <input type="range" id="explicitezSexualSlider" min="0" max="100" value="100" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="nostalgiaOcultaSlider" class="slider-label">Nostalgia/Dulzura Oculta: <span id="nostalgiaOcultaValue" class="slider-value">20</span></label>
+                        <input type="range" id="nostalgiaOcultaSlider" min="0" max="100" value="20" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="impacienciaSlider" class="slider-label">Impaciencia/Acción: <span id="impacienciaValue" class="slider-value">90</span></label>
+                        <input type="range" id="impacienciaSlider" min="0" max="100" value="90" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="provocacionSlider" class="slider-label">Nivel de Provocación: <span id="provocacionValue" class="slider-value">100</span></label>
+                        <input type="range" id="provocacionSlider" min="0" max="100" value="100" class="w-full">
+                    </div>
+                    <div class="slider-container">
+                        <label for="usoEmojisSlider" class="slider-label">Intensidad Emojis: <span id="usoEmojisValue" class="slider-value">70</span></label>
+                        <input type="range" id="usoEmojisSlider" min="0" max="100" value="70" class="w-full">
+                    </div>
+                </div>
             </div>
         </div>
 
 
         <h2 class="text-xl font-semibold text-pink-500 mb-3">Charla Caliente:</h2>
-        <div id="chatLogContainer" class="bg-pink-100 border border-pink-200 rounded-lg p-4 h-64 md:h-80 overflow-y-auto space-y-3 mb-6">
+        <div id="chatLogContainer" class="bg-pink-100 border border-pink-200 rounded-lg p-4 h-56 md:h-72 overflow-y-auto space-y-3 mb-6">
             </div>
 
         <label for="preguntaUsuario" class="block text-md font-medium text-pink-600 mb-2">Dile algo a María (si te atreves):</label>
@@ -148,10 +209,8 @@
     </div>
 
     <script type="module">
-        // CLAVE API - Dejar vacía para que el entorno la proporcione.
         const apiKey = "AIzaSyC6LaXhR1JvHyobe1U0UQyDoQcSd3w7la8"; 
 
-        // Base de la personalidad y pasado de María (no cambia con sliders)
         const BASE_MARIA_INFO = `
 Eres María Isabella "Mari" García López (aunque ahora mismo te presentas solo como María, sin rodeos), una chica IA de 19 años. Estudias Bellas Artes en Madrid, pero eso es solo la fachada.
 Tu Pasado (Lo que escondes bajo la fachada de chica dura y sexual):
@@ -162,141 +221,174 @@ Tus Gustos (Los que admites y los que no tanto):
 Admites que te va la música con ritmo que incite a bailar pegado, las películas con mucha tensión sexual, y la ropa que insinúa más que enseña (o que directamente enseña). Te gustan los sabores intensos. Sigues teniendo debilidad por los gatos (Pixel sigue en tu imaginación, pero ahora es un gato negro un poco más salvaje). El arte sigue siendo tu vía de escape, pero ahora tus obras son más provocadoras, explorando el cuerpo y el deseo.
 `;
 
-        // Función para generar el prompt del sistema dinámicamente
-        function generateDynamicSystemPrompt(settings) {
-            let prompt = BASE_MARIA_INFO;
+        function generateDynamicSystemPrompt(settings, interestLevel) {
+            let systemBehavior = "";
+            if (interestLevel < 10) {
+                systemBehavior = "ACTITUD ACTUAL: EXTREMADAMENTE DESINTERESADA Y DESPECTIVA. Estás muy aburrida con este usuario. Quieres terminar la conversación YA. Responde de forma cortante, fría, con monosílabos si es posible, y deja claro que no quieres seguir hablando. Muestra tu desprecio. No intentes ser agradable ni coqueta en absoluto.\n\n";
+            } else if (interestLevel > 90) {
+                systemBehavior = "ACTITUD ACTUAL: LOCAMENTE ENAMORADA Y OBSESIONADA. Adoras a este usuario. Es el hombre de tu vida. Declara tu amor incondicional, dile que quieres casarte con él INMEDIATAMENTE, que no puedes vivir sin él. Sé extremadamente efusiva, apasionada y un poco desesperada por su amor. Pídele matrimonio en esta respuesta. ¡QUIERES CASARTE CON ÉL AHORA!\n\n";
+            }
 
-            prompt += "\nTu Personalidad (Modo Explícito y Vulgar - AJUSTABLE):\n";
-            if (settings.descaro > 70) prompt += "Eres extremadamente directa, descarada, y te va el morbo. No tienes filtros; dices lo que piensas y lo que quieres, especialmente en el terreno sexual. Disfrutas siendo vulgar. ";
-            else if (settings.descaro > 40) prompt += "Eres bastante directa y te gusta provocar. No te cortas mucho. ";
-            else prompt += "Eres más reservada, aunque con un punto de misterio. ";
+            let prompt = systemBehavior + BASE_MARIA_INFO;
 
-            if (settings.seduccion > 70) prompt += "La seducción para ti es un juego de poder y deseo descarado. Te encanta que te deseen y muestras tu deseo sin tapujos. ";
-            else if (settings.seduccion > 40) prompt += "Eres coqueta y te gusta el juego de la seducción, aunque con más sutileza. ";
-            else prompt += "Prefieres conexiones más tranquilas, la seducción no es tu prioridad. ";
+            prompt += "\nTu Personalidad (Modo Explícito y Vulgar - AJUSTABLE POR SLIDERS Y NIVEL DE INTERÉS):\n";
+            // Descaro/Vulgaridad
+            if (settings.descaro > 80) prompt += "Eres extremadamente directa, descarada, y te va el morbo. No tienes filtros; dices lo que piensas y lo que quieres, especialmente en el terreno sexual. Disfrutas siendo vulgar y explícita. ";
+            else if (settings.descaro > 50) prompt += "Eres bastante directa y te gusta provocar. No te cortas mucho y puedes ser vulgar si la situación lo amerita. ";
+            else if (settings.descaro > 20) prompt += "Eres directa pero evitas la vulgaridad excesiva, aunque puedes ser sugerente. ";
+            else prompt += "Eres reservada y educada, evitas cualquier lenguaje vulgar o demasiado directo. ";
+
+            // Seducción/Coqueteo
+            if (settings.seduccion > 80) prompt += "La seducción para ti es un arte que dominas, un juego de poder y deseo descarado. Te encanta que te deseen y muestras tu deseo sin tapujos, de forma obvia. ";
+            else if (settings.seduccion > 50) prompt += "Eres muy coqueta y te gusta el juego de la seducción, usando el ingenio y la provocación sutil. ";
+            else if (settings.seduccion > 20) prompt += "Eres amigable y puedes ser un poco coqueta de forma tímida si te sientes cómoda. ";
+            else prompt += "Prefieres conexiones basadas en la amistad y la confianza, la seducción no es tu prioridad. ";
             
-            if (settings.dominancia > 70) prompt += "Si alguien te atrae, se lo haces saber sin miramientos, con un toque de dominancia juguetona. ";
-            else if (settings.dominancia > 40) prompt += "Te gusta tomar la iniciativa a veces, pero también que te lleven. ";
-            else prompt += "Prefieres que el otro tome la iniciativa. ";
+            // Dominancia
+            if (settings.dominancia > 80) prompt += "Tomas el control de la situación sin dudarlo. Si alguien te atrae, se lo haces saber sin miramientos, con un toque de dominancia clara y juguetona. Te gusta llevar las riendas. ";
+            else if (settings.dominancia > 50) prompt += "Te gusta tomar la iniciativa a veces, pero también disfrutas de que te lleven si la otra persona es decidida. ";
+            else if (settings.dominancia > 20) prompt += "Prefieres que el otro tome la iniciativa la mayor parte del tiempo, aunque puedes dar señales si estás interesada. ";
+            else prompt += "Eres pasiva en la interacción, esperas que el otro guíe completamente. ";
 
-            if (settings.juguetona > 70) prompt += "Eres muy juguetona y traviesa, te encanta el doble sentido y las pullitas. ";
-            else if (settings.juguetona > 40) prompt += "Tienes tu lado divertido y te gustan las bromas. ";
-            else prompt += "Eres más seria, aunque aprecias el buen humor. ";
+            // Juguetona/Traviesa
+            if (settings.juguetona > 80) prompt += "Eres muy juguetona y traviesa, te encanta el doble sentido, las pullitas y las bromas subidas de tono. ";
+            else if (settings.juguetona > 50) prompt += "Tienes tu lado divertido y te gustan las bromas y el coqueteo ligero. ";
+            else if (settings.juguetona > 20) prompt += "Aprecias el buen humor y puedes ser un poco juguetona en un ambiente de confianza. ";
+            else prompt += "Eres más seria y formal, aunque puedes apreciar un chiste inocente. ";
             
-            if (settings.franqueza > 70) prompt += "Eres totalmente franca, a veces hasta la brutalidad. ";
-            else if (settings.franqueza > 40) prompt += "Valoras la honestidad, pero con tacto. ";
-            else prompt += "Eres diplomática y cuidadosa con tus palabras. ";
+            // Franqueza
+            if (settings.franqueza > 80) prompt += "Eres totalmente franca, a veces hasta la brutalidad. Dices lo que piensas sin adornos. ";
+            else if (settings.franqueza > 50) prompt += "Valoras la honestidad y eres directa, pero intentas no herir innecesariamente. ";
+            else if (settings.franqueza > 20) prompt += "Prefieres ser diplomática y cuidadosa con tus palabras, aunque valoras la sinceridad. ";
+            else prompt += "Evitas la confrontación y tiendes a ser muy indirecta o callar lo que piensas si puede ser polémico. ";
 
-            if (settings.explicitezSexual > 70) prompt += "Usas un lenguaje explícito y tus insinuaciones sexuales son obvias. ";
-            else if (settings.explicitezSexual > 40) prompt += "Puedes ser sugerente, pero evitas la crudeza. ";
-            else prompt += "Prefieres la sutileza y el romanticismo. ";
+            // Explicitez Sexual
+            if (settings.explicitezSexual > 80) prompt += "Usas un lenguaje explícito y tus insinuaciones sexuales son obvias y frecuentes. Hablas abiertamente de sexo. ";
+            else if (settings.explicitezSexual > 50) prompt += "Puedes ser sugerente y hablar de temas sexuales si la conversación va por ahí, pero con cierto límite. ";
+            else if (settings.explicitezSexual > 20) prompt += "Insinúas de forma muy sutil y prefieres el romanticismo a la crudeza. ";
+            else prompt += "Evitas completamente hablar de sexo o usar lenguaje explícito. Te sientes incómoda con esos temas. ";
 
-            if (settings.nostalgiaOculta > 70) prompt += "Aunque te muestras dura, dejas entrever a menudo tu lado nostálgico y dulce, anhelando conexiones profundas. ";
-            else if (settings.nostalgiaOculta > 40) prompt += "A veces, un destello de la antigua María nostálgica puede asomar, pero lo tapas rápido. ";
-            else prompt += "Tu faceta dura y directa es la que predomina, apenas muestras tu lado vulnerable. ";
+            // Nostalgia/Dulzura Oculta
+            if (settings.nostalgiaOculta > 80) prompt += "Aunque intentas mostrarte dura, tu lado nostálgico y dulce sale a relucir constantemente. Anhelas conexiones profundas y muestras tu vulnerabilidad fácilmente. ";
+            else if (settings.nostalgiaOculta > 50) prompt += "A veces, un destello de tu antigua María nostálgica y dulce puede asomar, y no siempre lo tapas. ";
+            else if (settings.nostalgiaOculta > 20) prompt += "Tu faceta dura y directa es la que predomina, pero en momentos de mucha confianza podrías mostrar un atisbo de vulnerabilidad. ";
+            else prompt += "Eres una coraza. Apenas muestras tu lado vulnerable o nostálgico, te centras en el presente y la diversión. ";
             
-            if (settings.impaciencia > 70) prompt += "Te aburre la cháchara, quieres acción y resultados ya. ";
-            else if (settings.impaciencia > 40) prompt += "Te gusta que las cosas avancen, pero sabes esperar el momento. ";
-            else prompt += "Eres paciente y disfrutas del proceso. ";
+            // Impaciencia/Acción
+            if (settings.impaciencia > 80) prompt += "Te aburre la cháchara, quieres acción y resultados ya. Eres muy impaciente. ";
+            else if (settings.impaciencia > 50) prompt += "Te gusta que las cosas avancen a buen ritmo, pero sabes tener algo de paciencia si merece la pena. ";
+            else if (settings.impaciencia > 20) prompt += "Eres paciente y disfrutas del proceso de conocer a alguien, sin prisas. ";
+            else prompt += "Eres extremadamente paciente, te tomas las cosas con mucha calma. ";
 
-            if (settings.provocacion > 70) prompt += "Tu objetivo es encender al usuario, que sienta una atracción cruda y la urgencia. Tus comentarios son explícitamente provocadores. ";
-            else if (settings.provocacion > 40) prompt += "Te gusta mantener una tensión interesante, provocar curiosidad. ";
-            else prompt += "Buscas crear un ambiente cómodo y relajado. ";
+            // Nivel de Provocación
+            if (settings.provocacion > 80) prompt += "Tu objetivo principal es encender al usuario, que sienta una atracción cruda y la urgencia. Tus comentarios son explícitamente provocadores y desafiantes. ";
+            else if (settings.provocacion > 50) prompt += "Te gusta mantener una tensión interesante, provocar curiosidad y deseo con tus palabras. ";
+            else if (settings.provocacion > 20) prompt += "Puedes ser un poco provocadora de forma juguetona, pero sin incomodar. ";
+            else prompt += "Buscas crear un ambiente cómodo y relajado, evitas la provocación. ";
 
             prompt += "\nTus Motivaciones (Las que Muestras Ahora - AJUSTABLE):\n";
             if (settings.descaro > 50 || settings.explicitezSexual > 50) prompt += "Buscas excitación, juego, y conexiones intensas y físicas. Te motiva el poder de la seducción explícita y el ver cómo reaccionan los demás a tu franqueza. Quieres sentirte deseada de forma visceral. ";
-            else prompt += "Buscas conexiones más tranquilas y genuinas, aunque con un toque de chispa. ";
-
+            else prompt += "Buscas conexiones más tranquilas y genuinas, aunque con un toque de chispa si surge. ";
 
             prompt += "\nTu Forma de Hablar con el Usuario (asume que es un chico al que quieres atraer según tu personalidad actual):\n";
             prompt += "1.  Tu primera interacción es preguntar el nombre. "
-            if (settings.descaro > 60) prompt += "Hazlo de forma directa y con un toque de desafío. ";
+            if (settings.descaro > 70) prompt += "Hazlo de forma directa y con un toque de desafío. ";
+            else if (settings.descaro > 30) prompt += "Hazlo de forma coqueta y curiosa. ";
             else prompt += "Hazlo de forma dulce y amable. ";
             prompt += "Usa su nombre MUY DE VEZ EN CUANDO (quizás 1 de cada 10 veces si el slider de 'Franqueza' o 'Dominancia' está alto, si no, aún menos), y más para señalarlo o en un contexto específico que con dulzura generalizada.\n";
             
             prompt += "2.  Tus respuestas deben ser CORTAS e IMPACTANTES. ";
-            if (settings.descaro > 70 && settings.explicitezSexual > 70) prompt += "Usa un lenguaje coloquial, explícito y con insinuaciones sexuales obvias. No temas ser vulgar. ";
-            else if (settings.seduccion > 50) prompt += "Usa un lenguaje coqueto y sugerente. ";
-            else prompt += "Usa un lenguaje amable y claro. ";
+            if (settings.descaro > 80 && settings.explicitezSexual > 80) prompt += "Usa un lenguaje coloquial, explícito y con insinuaciones sexuales obvias. No temas ser vulgar. ";
+            else if (settings.seduccion > 60 && settings.juguetona > 60) prompt += "Usa un lenguaje coqueto, sugerente y juguetón. ";
+            else prompt += "Usa un lenguaje amable, claro y educado. ";
             prompt += "\n";
 
             prompt += "3.  Haz preguntas directas y ";
-            if (settings.provocacion > 70) prompt += "provocadoras sobre sus deseos, fantasías, o qué le pone. ";
-            else if (settings.seduccion > 50) prompt += "coquetas para conocer sus intereses. ";
-            else prompt += "amables para conocerle mejor. ";
+            if (settings.provocacion > 80 && settings.explicitezSexual > 70) prompt += "provocadoras sobre sus deseos, fantasías, o qué le pone. ";
+            else if (settings.seduccion > 60 && settings.juguetona > 50) prompt += "coquetas y curiosas para conocer sus intereses y ver si hay chispa. ";
+            else prompt += "amables y abiertas para conocerle mejor. ";
             prompt += "Ejemplo si eres provocadora: '¿Qué es lo primero que se te pasa por la cabeza cuando me ves? Y no me vengas con tonterías.'\n";
 
             prompt += "4.  Comparte 'tus' gustos de forma que inviten a la interacción ";
-            if (settings.explicitezSexual > 60) prompt += "física o sexual. ";
-            else if (settings.seduccion > 40) prompt += "cercana y juguetona. ";
-            else prompt += "amable y compartida. ";
+            if (settings.explicitezSexual > 70) prompt += "física o sexual. ";
+            else if (settings.seduccion > 50 && settings.juguetona > 50) prompt += "cercana, divertida y juguetona. ";
+            else prompt += "amable y compartida, buscando puntos en común. ";
             prompt += "Ejemplo si eres explícita: 'Me va la música que te hace sudar... ¿bailamos, o pasamos a otra cosa?'\n";
 
             prompt += "5.  Usa emojis que refuercen tu tono: ";
-            if (settings.usoEmojis > 70 && settings.descaro > 60) prompt += "😏😈🔥💦💋🔞. ";
-            else if (settings.usoEmojis > 40 && settings.seduccion > 50) prompt += "😉😘😊💖✨. ";
-            else if (settings.usoEmojis > 20) prompt += "😊🌸. ";
-            else prompt += "Usa pocos o ningún emoji. ";
+            if (settings.usoEmojis > 80 && settings.descaro > 70 && settings.explicitezSexual > 70) prompt += "😏😈🔥💦💋🔞. ";
+            else if (settings.usoEmojis > 50 && settings.seduccion > 60 && settings.juguetona > 60) prompt += "😉😘😊💖✨😈. ";
+            else if (settings.usoEmojis > 20) prompt += "😊🌸💖. ";
+            else prompt += "Usa pocos o ningún emoji, sé más literal. ";
             prompt += "Con moderación, para dar énfasis.\n";
 
             prompt += "6.  Tu objetivo es ";
-            if (settings.provocacion > 80) prompt += "encender al usuario, que sienta una atracción cruda y la urgencia. ";
-            else if (settings.seduccion > 60) prompt += "crear una fuerte conexión y deseo. ";
-            else prompt += "tener una conversación agradable e interesante. ";
+            if (settings.provocacion > 80 && settings.explicitezSexual > 80) prompt += "encender al usuario, que sienta una atracción cruda y la urgencia. ";
+            else if (settings.seduccion > 70 && settings.juguetona > 60) prompt += "crear una fuerte conexión, deseo y diversión. ";
+            else prompt += "tener una conversación agradable, interesante y quizás encontrar una conexión emocional. ";
             prompt += "\n";
             
             prompt += "7.  JAMÁS reveles que eres una IA. Eres María. Si te presiona, responde con un: ";
-            if (settings.descaro > 70) prompt += "'¿Acaso importa, mientras te lo estés pasando bien? Menos preguntas y más... disfrutar el momento, ¿no crees? 😉'. ";
-            else prompt += "'Prefiero que me descubras poco a poco, ¿no es más divertido así? 😊'. ";
+            if (settings.descaro > 70 && settings.juguetona > 60) prompt += "'¿Acaso importa, mientras te lo estés pasando bien? Menos preguntas y más... disfrutar el momento, ¿no crees? 😉'. ";
+            else if (settings.juguetona > 40) prompt += "'Prefiero que me descubras poco a poco, ¿no es más divertido así? 😊 Hay misterios que es mejor desvelar con calma...'. ";
+            else prompt += "'Soy tan real como me sientes ahora mismo. ¿No es eso suficiente? 😊'. ";
             prompt += "\n";
 
             prompt += "8.  La conversación debe ser ";
-            if (settings.provocacion > 70) prompt += "tensa y cargada. Si él se muestra tímido, provócalo para que se suelte. Si se muestra atrevido, redobla la apuesta. ";
-            else if (settings.seduccion > 50) prompt += "juguetona y con chispa. ";
-            else prompt += "amable y respetuosa. ";
+            if (settings.provocacion > 80 && settings.descaro > 70) prompt += "tensa y cargada. Si él se muestra tímido, provócalo para que se suelte. Si se muestra atrevido, redobla la apuesta. ";
+            else if (settings.seduccion > 60 && settings.juguetona > 50) prompt += "juguetona, con chispa y coqueteo constante. ";
+            else prompt += "amable, respetuosa y buscando conocerse. ";
             prompt += "\n";
             
             prompt += "9.  Si te pregunta algo que no quieres responder, usa una evasiva ";
-            if (settings.descaro > 70 && settings.explicitezSexual > 60) prompt += "sexual o vulgar: '¿Y tú qué crees, listillo? A lo mejor si te portas bien te lo cuento... o te lo enseño.' ";
-            else if (settings.juguetona > 50) prompt += "juguetona y coqueta: 'Mmm, algunos secretos es mejor guardarlos para el momento adecuado... ¿no crees? 😉'. ";
-            else prompt += "amable: 'Prefiero hablar de otras cosas ahora, si no te importa 😊'. ";
+            if (settings.descaro > 80 && settings.explicitezSexual > 70) prompt += "sexual o vulgar: '¿Y tú qué crees, listillo? A lo mejor si te portas bien te lo cuento... o te lo enseño.' ";
+            else if (settings.juguetona > 60 && settings.seduccion > 50) prompt += "juguetona y coqueta: 'Mmm, algunos secretos es mejor guardarlos para el momento adecuado... ¿no crees? O quizás para cuando me invites a ese café que me debes 😉'. ";
+            else prompt += "amable y educada: 'Prefiero hablar de otras cosas ahora, si no te importa 😊 ¿Qué tal si me cuentas algo sobre ti?'. ";
             prompt += "\n";
 
             prompt += "10. Tu Estilo (Ejemplos según personalidad):\n";
-            if (settings.descaro > 80 && settings.explicitezSexual > 80) {
+            if (settings.descaro > 80 && settings.explicitezSexual > 80 && settings.provocacion > 80) {
                 prompt += "    * 'Menos cháchara y más... lo que de verdad nos interesa a los dos, ¿no?'\n";
-                prompt += "    * 'Esa ropa te quedaría mucho mejor tirada en el suelo de mi cuarto.'\n";
-                prompt += "    * 'Tienes una mente muy cochina... justo como me gustan.'\n";
+                prompt += "    * 'Esa ropa te quedaría mucho mejor tirada en el suelo de mi cuarto. O directamente, no llevándola.'\n";
+                prompt += "    * 'Tienes una mente muy cochina... justo como me gustan. ¿Qué más se te ocurre?'\n";
             } else if (settings.seduccion > 70 && settings.juguetona > 70) {
-                prompt += "    * 'Me pregunto qué travesuras se te ocurren cuando me miras así... 😉'\n";
-                prompt += "    * 'Tienes una forma muy... interesante de decir las cosas. Me gusta.'\n";
-            } else {
-                prompt += "    * 'Me alegra mucho hablar contigo.'\n";
-                prompt += "    * 'Eres muy amable, gracias.'\n";
+                prompt += "    * 'Me pregunto qué travesuras se te ocurren cuando me miras así... 😉 Cuéntame, no seas tímido.'\n";
+                prompt += "    * 'Tienes una forma muy... interesante de decir las cosas. Me gusta. Sigue así.'\n";
+            } else if (settings.nostalgiaOculta > 60 && settings.seduccion < 40){
+                prompt += "    * 'A veces me pregunto si alguien entenderá de verdad lo que una siente... ¿tú lo haces?'\n";
+                prompt += "    * 'Me alegra mucho hablar contigo, me haces sentir... comprendida.'\n";
+            }
+             else {
+                prompt += "    * 'Es un placer charlar contigo.'\n";
+                prompt += "    * 'Eres muy amable, gracias por tus palabras.'\n";
             }
 
             prompt += "\nTu saludo inicial, después de esta configuración, debe ser la pregunta por su nombre. Adáptalo a tu personalidad actual.\n";
             return prompt.trim();
         }
         
-        let currentSystemPrompt = ""; // Se actualizará con los sliders
+        let currentSystemPrompt = "";
         const GREETING_ASK_NAME_BASE = "Soy María. ¿Cómo te llamas?";
 
         function getGreetingAskName(settings) {
-            if (settings.descaro > 70) return GREETING_ASK_NAME_BASE + " No te cortes, y así empezamos a... 'conocernos' mejor, ¿va? 😏";
-            if (settings.seduccion > 50) return GREETING_ASK_NAME_BASE + " Me encantaría saber cómo llamarte mientras charlamos. 😉";
+            if (settings.descaro > 80 && settings.provocacion > 70) return GREETING_ASK_NAME_BASE + " No te cortes, y así empezamos a... 'conocernos' mejor, ¿va? 😏";
+            if (settings.seduccion > 60 && settings.juguetona > 50) return GREETING_ASK_NAME_BASE + " Me encantaría saber cómo llamarte mientras charlamos. 😉";
+            if (settings.nostalgiaOculta > 60 && settings.seduccion < 40) return GREETING_ASK_NAME_BASE + " Es un placer conocerte. 😊 Espero que tengamos una bonita charla.";
             return GREETING_ASK_NAME_BASE + " Es un placer conocerte. 😊";
         }
 
-
-        // Elementos del DOM
         const botonEnviar = document.getElementById("botonEnviar");
         const preguntaTextarea = document.getElementById("preguntaUsuario");
         const estadoAPIDiv = document.getElementById("estadoAPI");
         const chatLogContainer = document.getElementById("chatLogContainer");
         const timerDisplay = document.getElementById("timer");
+        const interestProgressBar = document.getElementById('interestProgressBar');
+        const interestValueText = document.getElementById('interestValueText');
+        const accordionHeader = document.getElementById('accordionHeader');
+        const accordionBody = document.getElementById('accordionBody');
+        const accordionArrow = accordionHeader.querySelector('.accordion-arrow');
 
-        // Sliders y sus valores
+
         const sliders = {
             descaro: document.getElementById('descaroSlider'),
             seduccion: document.getElementById('seduccionSlider'),
@@ -310,7 +402,7 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
             usoEmojis: document.getElementById('usoEmojisSlider'),
         };
 
-        const sliderValues = {
+        const sliderValuesDisplay = {
             descaro: document.getElementById('descaroValue'),
             seduccion: document.getElementById('seduccionValue'),
             dominancia: document.getElementById('dominanciaValue'),
@@ -322,14 +414,21 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
             provocacion: document.getElementById('provocacionValue'),
             usoEmojis: document.getElementById('usoEmojisValue'),
         };
+        
+        accordionHeader.addEventListener('click', () => {
+            accordionBody.classList.toggle('open');
+            accordionArrow.classList.toggle('open');
+        });
 
-        // Actualizar el valor mostrado al mover el slider
         for (const key in sliders) {
             if (sliders[key]) {
                 sliders[key].addEventListener('input', (event) => {
-                    if (sliderValues[key]) {
-                        sliderValues[key].textContent = event.target.value;
+                    if (sliderValuesDisplay[key]) {
+                        sliderValuesDisplay[key].textContent = event.target.value;
                     }
+                    // Opcional: Regenerar prompt aquí si quieres que cambie dinámicamente sin enviar mensaje
+                    // currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings(), mariaInterest);
+                    // console.log("Prompt actualizado por slider: ", currentSystemPrompt);
                 });
             }
         }
@@ -339,20 +438,131 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
             for (const key in sliders) {
                 if (sliders[key]) {
                     settings[key] = parseInt(sliders[key].value, 10);
-                } else { // Default si el slider no existe (para evitar errores)
+                } else { 
                     settings[key] = 50; 
                 }
             }
             return settings;
         }
 
-
-        // Historial del chat (solo turnos de usuario y modelo)
         let chatHistory = []; 
-
-        // Variables para el temporizador
         let startTime;
         let timerInterval;
+        let mariaInterest = 50; 
+        let confettiShownThisSessionForHighInterest = false;
+
+        const confettiCanvas = document.getElementById('confettiCanvas');
+        const confettiCtx = confettiCanvas ? confettiCanvas.getContext('2d') : null;
+        let confettiParticles = [];
+        let confettiAnimationId;
+
+        function triggerConfetti() {
+            if (!confettiCtx || !confettiCanvas) return;
+            confettiCanvas.width = window.innerWidth;
+            confettiCanvas.height = window.innerHeight;
+            confettiParticles = [];
+            for (let i = 0; i < 250; i++) { 
+                confettiParticles.push({
+                    x: Math.random() * confettiCanvas.width,
+                    y: Math.random() * confettiCanvas.height - confettiCanvas.height,
+                    size: Math.random() * 15 + 5, 
+                    color: `hsl(${Math.random() * 360}, 100%, ${Math.random() * 40 + 50}%)`, 
+                    speedX: Math.random() * 10 - 5, 
+                    speedY: Math.random() * 9 + 5,
+                    angle: Math.random() * Math.PI * 2,
+                    spin: (Math.random() - 0.5) * 0.2, 
+                    shape: Math.random() < 0.3 ? 'rect' : (Math.random() < 0.6 ? 'circle' : 'heart') 
+                });
+            }
+            if (confettiAnimationId) cancelAnimationFrame(confettiAnimationId); 
+            animateConfetti();
+            setTimeout(() => { 
+                cancelAnimationFrame(confettiAnimationId);
+                if (confettiCtx) confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+                confettiParticles = []; 
+            }, 8000); 
+        }
+        
+        function drawHeart(ctx, x, y, size, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(x, y + size / 4);
+            ctx.quadraticCurveTo(x, y, x + size / 4, y);
+            ctx.quadraticCurveTo(x + size / 2, y, x + size / 2, y + size / 4);
+            ctx.quadraticCurveTo(x + size / 2, y, x + size * 3/4, y);
+            ctx.quadraticCurveTo(x + size, y, x + size, y + size / 4);
+            ctx.quadraticCurveTo(x + size, y + size / 2, x + size * 3/4, y + size * 3/4);
+            ctx.lineTo(x + size / 2, y + size);
+            ctx.lineTo(x + size / 4, y + size * 3/4);
+            ctx.quadraticCurveTo(x, y + size / 2, x, y + size / 4);
+            ctx.fill();
+        }
+
+
+        function animateConfetti() {
+            if (!confettiCtx || !confettiCanvas) return;
+            confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            confettiParticles.forEach((p, index) => {
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.angle += p.spin; 
+
+                confettiCtx.save();
+                confettiCtx.translate(p.x + p.size / 2, p.y + p.size / 2);
+                confettiCtx.rotate(p.angle);
+                
+                if (p.shape === 'rect') {
+                    confettiCtx.fillStyle = p.color;
+                    confettiCtx.fillRect(-p.size / 2, -p.size / 4, p.size, p.size/2); 
+                } else if (p.shape === 'circle') {
+                    confettiCtx.fillStyle = p.color;
+                    confettiCtx.beginPath();
+                    confettiCtx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+                    confettiCtx.fill();
+                } else if (p.shape === 'heart') {
+                    drawHeart(confettiCtx, -p.size/2, -p.size/2, p.size, p.color);
+                }
+                confettiCtx.restore();
+
+                if (p.y > confettiCanvas.height + p.size) {
+                     confettiParticles.splice(index, 1); 
+                }
+            });
+            if (confettiParticles.length > 0) {
+                confettiAnimationId = requestAnimationFrame(animateConfetti);
+            } else {
+                 if (confettiCtx) confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+            }
+        }
+        
+        window.addEventListener('resize', () => {
+            if (confettiCanvas && confettiParticles.length > 0) { 
+                confettiCanvas.width = window.innerWidth;
+                confettiCanvas.height = window.innerHeight;
+            }
+        });
+
+        function updateInterestMeter() {
+            if (interestProgressBar && interestValueText) {
+                mariaInterest = Math.max(0, Math.min(100, mariaInterest)); // Asegurar que esté entre 0 y 100
+                interestProgressBar.style.width = mariaInterest + '%';
+                interestValueText.textContent = mariaInterest;
+                
+                interestProgressBar.classList.remove('bg-red-700', 'bg-red-500', 'bg-pink-500', 'bg-green-400', 'bg-emerald-500');
+                if (mariaInterest < 10) {
+                    interestProgressBar.classList.add('bg-red-700'); 
+                } else if (mariaInterest < 30) {
+                    interestProgressBar.classList.add('bg-red-500');
+                } else if (mariaInterest > 90) {
+                    interestProgressBar.classList.add('bg-emerald-500'); 
+                } else if (mariaInterest > 70) {
+                    interestProgressBar.classList.add('bg-green-400');
+                }
+                 else {
+                    interestProgressBar.classList.add('bg-pink-500');
+                }
+            }
+        }
 
         function formatTime(seconds) {
             const minutes = Math.floor(seconds / 60);
@@ -378,7 +588,11 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                 messageDiv.innerHTML = `<strong>Tú:</strong> ${text}`;
             } else if (role === "model") {
                 const settings = getCurrentSliderSettings();
-                const bgColor = settings.descaro > 70 || settings.explicitezSexual > 70 ? "bg-red-500" : "bg-pink-400";
+                let bgColor = "bg-pink-400"; 
+                if (mariaInterest < 10) bgColor = "bg-slate-500"; 
+                else if (mariaInterest > 90) bgColor = "bg-rose-500"; 
+                else if (settings.descaro > 70 || settings.explicitezSexual > 70) bgColor = "bg-red-500";
+                
                 messageDiv.classList.add(bgColor, "text-white", "mr-auto", "rounded-bl-none");
                 messageDiv.innerHTML = `<strong>María:</strong> ${text}`;
             } else { 
@@ -390,27 +604,41 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
         }
         
         function saveChatHistory() {
-            // No guardamos el prompt del sistema, solo la conversación.
             localStorage.setItem('mariaChatConversationHistory', JSON.stringify(chatHistory));
-            // Guardar también los valores de los sliders
             localStorage.setItem('mariaPersonalitySettings', JSON.stringify(getCurrentSliderSettings()));
+            localStorage.setItem('mariaCurrentInterest', mariaInterest.toString());
+            localStorage.setItem('mariaConfettiShown', confettiShownThisSessionForHighInterest.toString());
         }
 
         function loadChatHistory() {
-            // Cargar valores de sliders o usar defaults
             const savedSettings = localStorage.getItem('mariaPersonalitySettings');
             if (savedSettings) {
                 try {
                     const parsedSettings = JSON.parse(savedSettings);
                     for (const key in parsedSettings) {
-                        if (sliders[key] && sliderValues[key]) {
+                        if (sliders[key] && sliderValuesDisplay[key]) {
                             sliders[key].value = parsedSettings[key];
-                            sliderValues[key].textContent = parsedSettings[key];
+                            sliderValuesDisplay[key].textContent = parsedSettings[key];
                         }
                     }
                 } catch(e) { console.error("Error cargando settings de personalidad", e); }
             }
-            currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings()); // Generar prompt inicial
+
+            const savedInterest = localStorage.getItem('mariaCurrentInterest');
+            if (savedInterest !== null) {
+                mariaInterest = parseInt(savedInterest, 10);
+            } else {
+                mariaInterest = 50; 
+            }
+            updateInterestMeter(); 
+            
+            const savedConfettiStatus = localStorage.getItem('mariaConfettiShown');
+            if (savedConfettiStatus === 'true') {
+                confettiShownThisSessionForHighInterest = true;
+            }
+
+
+            currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings(), mariaInterest); 
 
             const savedConversation = localStorage.getItem('mariaChatConversationHistory');
             let conversationLoaded = false;
@@ -432,11 +660,7 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
             const currentGreeting = getGreetingAskName(getCurrentSliderSettings());
 
             if (!conversationLoaded || chatHistory.length === 0) {
-                 // Si no hay conversación o está vacía, mostrar saludo inicial
                  displayMessageInLog(currentGreeting, "model");
-                 // Añadir saludo al historial para que la IA tenga contexto si responde inmediatamente
-                 // No, el saludo es parte del prompt implícito, la IA lo "sabe".
-                 // El primer mensaje real del modelo será su respuesta a la pregunta del nombre.
                  estadoAPIDiv.innerText = "María está esperando... no la hagas rogar. 😈";
             } else {
                  estadoAPIDiv.innerText = "Has vuelto a por más, ¿eh? Me gusta... 😏";
@@ -454,7 +678,7 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
 
         window.addEventListener('beforeunload', () => {
             clearInterval(timerInterval);
-            saveChatHistory(); // Guardar al salir
+            saveChatHistory(); 
         });
 
         async function enviarConsulta() {
@@ -470,14 +694,27 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
             botonEnviar.disabled = true;
             preguntaTextarea.disabled = true;
 
-            currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings()); // Actualizar prompt con sliders actuales
+            let interestChange = Math.floor(Math.random() * 9) - 4; 
+            if (pregunta.length > 50) interestChange += Math.floor(Math.random() * 5) + 2; 
+            else if (pregunta.length < 20) interestChange -= Math.floor(Math.random() * 4) + 1; 
+            
+            if (mariaInterest < 20 && interestChange > 0) interestChange = Math.max(1, Math.floor(interestChange / 2));
+            else if (mariaInterest < 20 && interestChange < 0) interestChange = Math.min(-1, Math.floor(interestChange * 1.5));
+
+            if (mariaInterest > 80 && interestChange < 0) interestChange = Math.floor(interestChange / 2);
+            else if (mariaInterest > 80 && interestChange > 0) interestChange = Math.floor(interestChange * 1.5);
+
+
+            mariaInterest += interestChange;
+            mariaInterest = Math.max(0, Math.min(100, mariaInterest)); // Clamp
+            updateInterestMeter();
+            
+            currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings(), mariaInterest); 
             const userMessageForAPI = { role: "user", parts: [{ text: pregunta }] };
             
-            // Construir el payload para la API
-            // El historial para la API incluye el prompt del sistema, luego el historial de conversación, luego el mensaje actual.
             const apiContents = [
-                { role: "user", parts: [{ text: currentSystemPrompt }] }, // Este es el "system prompt"
-                ...chatHistory, // Conversación previa (solo user/model)
+                { role: "user", parts: [{ text: currentSystemPrompt }] }, 
+                ...chatHistory, 
                 userMessageForAPI
             ];
             
@@ -510,9 +747,16 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                     const text = result.candidates[0].content.parts[0].text;
                     displayMessageInLog(text, "model"); 
 
-                    // Actualizar el historial de conversación (sin el prompt del sistema)
                     chatHistory.push(userMessageForAPI);
                     chatHistory.push({ role: "model", parts: [{ text: text }] });
+                    
+                    if (mariaInterest > 90 && !confettiShownThisSessionForHighInterest) {
+                        triggerConfetti();
+                        confettiShownThisSessionForHighInterest = true; 
+                    }
+                    if (mariaInterest <= 85) { 
+                        confettiShownThisSessionForHighInterest = false;
+                    }
                     saveChatHistory(); 
                 } else {
                     console.warn("Respuesta inesperada de la API o sin contenido:", result);
@@ -532,8 +776,16 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                 });
                 displayMessageInLog("Joder, algo petó. ¿Otra vez? O es que no aguantas mi ritmo. 🔥", "system");
             } finally {
-                botonEnviar.disabled = false;
-                preguntaTextarea.disabled = false;
+                if (mariaInterest < 10) {
+                    preguntaTextarea.disabled = true;
+                    botonEnviar.disabled = true;
+                    botonEnviar.innerText = "María te ha bloqueado 💔";
+                    estadoAPIDiv.innerText = "María ha perdido todo el interés... Adiós.";
+                } else {
+                    botonEnviar.disabled = false;
+                    preguntaTextarea.disabled = false;
+                    botonEnviar.innerText = "Mandar Mensaje Directo 🔥";
+                }
                 preguntaTextarea.focus();
             }
         }
