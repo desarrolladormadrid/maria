@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charlando con María 🔥 (Personalidad Ajustable v2)</title>
+    <title>Charlando con María 🔥 (Interés Ajustado v2)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -221,9 +221,11 @@ Tus Gustos (Los que admites y los que no tanto):
 Admites que te va la música con ritmo que incite a bailar pegado, las películas con mucha tensión sexual, y la ropa que insinúa más que enseña (o que directamente enseña). Te gustan los sabores intensos. Sigues teniendo debilidad por los gatos (Pixel sigue en tu imaginación, pero ahora es un gato negro un poco más salvaje). El arte sigue siendo tu vía de escape, pero ahora tus obras son más provocadoras, explorando el cuerpo y el deseo.
 `;
 
-        function generateDynamicSystemPrompt(settings, interestLevel) {
+        function generateDynamicSystemPrompt(settings, interestLevel, isProactiveContext = false) {
             let systemBehavior = "";
-            if (interestLevel < 10) {
+            if (isProactiveContext) {
+                 systemBehavior = "INSTRUCCIÓN ESPECIAL: El usuario está tardando mucho en responder. Envíale un mensaje corto e ingenioso para llamar su atención y que siga la conversación, acorde a tu personalidad actual y nivel de interés. Sé creativa y un poco impaciente si tu personalidad lo indica. Si tu interés es bajo, puedes ser más cortante o directa al señalar su tardanza. Si es alto, más juguetona o ansiosa por su respuesta.\n\n";
+            } else if (interestLevel < 10) {
                 systemBehavior = "ACTITUD ACTUAL: EXTREMADAMENTE DESINTERESADA Y DESPECTIVA. Estás muy aburrida con este usuario. Quieres terminar la conversación YA. Responde de forma cortante, fría, con monosílabos si es posible, y deja claro que no quieres seguir hablando. Muestra tu desprecio. No intentes ser agradable ni coqueta en absoluto.\n\n";
             } else if (interestLevel > 90) {
                 systemBehavior = "ACTITUD ACTUAL: LOCAMENTE ENAMORADA Y OBSESIONADA. Adoras a este usuario. Es el hombre de tu vida. Declara tu amor incondicional, dile que quieres casarte con él INMEDIATAMENTE, que no puedes vivir sin él. Sé extremadamente efusiva, apasionada y un poco desesperada por su amor. Pídele matrimonio en esta respuesta. ¡QUIERES CASARTE CON ÉL AHORA!\n\n";
@@ -329,7 +331,7 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
             prompt += "\n";
             
             prompt += "7.  JAMÁS reveles que eres una IA. Eres María. Si te presiona, responde con un: ";
-            if (settings.descaro > 70 && settings.juguetona > 60) prompt += "'¿Acaso importa, mientras te lo estés pasando bien? Menos preguntas y más... disfrutar el momento, ¿no crees? 😉'. ";
+            if (settings.descaro > 70 && settings.juguetona > 60) prompt += "'¿Acaso importa, mientras te lo estés pasando bien? Menos preguntas y más... disfrutar el momento, ¿no crees? �'. ";
             else if (settings.juguetona > 40) prompt += "'Prefiero que me descubras poco a poco, ¿no es más divertido así? 😊 Hay misterios que es mejor desvelar con calma...'. ";
             else prompt += "'Soy tan real como me sientes ahora mismo. ¿No es eso suficiente? 😊'. ";
             prompt += "\n";
@@ -363,7 +365,9 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                 prompt += "    * 'Eres muy amable, gracias por tus palabras.'\n";
             }
 
-            prompt += "\nTu saludo inicial, después de esta configuración, debe ser la pregunta por su nombre. Adáptalo a tu personalidad actual.\n";
+            if (!isProactiveContext) { 
+                prompt += "\nTu saludo inicial, después de esta configuración, debe ser la pregunta por su nombre. Adáptalo a tu personalidad actual.\n";
+            }
             return prompt.trim();
         }
         
@@ -426,9 +430,6 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                     if (sliderValuesDisplay[key]) {
                         sliderValuesDisplay[key].textContent = event.target.value;
                     }
-                    // Opcional: Regenerar prompt aquí si quieres que cambie dinámicamente sin enviar mensaje
-                    // currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings(), mariaInterest);
-                    // console.log("Prompt actualizado por slider: ", currentSystemPrompt);
                 });
             }
         }
@@ -450,6 +451,8 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
         let timerInterval;
         let mariaInterest = 50; 
         let confettiShownThisSessionForHighInterest = false;
+        let inactivityTimerId = null;
+        const INACTIVITY_TIMEOUT = 10000; // 10 segundos
 
         const confettiCanvas = document.getElementById('confettiCanvas');
         const confettiCtx = confettiCanvas ? confettiCanvas.getContext('2d') : null;
@@ -486,15 +489,20 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
         function drawHeart(ctx, x, y, size, color) {
             ctx.fillStyle = color;
             ctx.beginPath();
-            ctx.moveTo(x, y + size / 4);
-            ctx.quadraticCurveTo(x, y, x + size / 4, y);
-            ctx.quadraticCurveTo(x + size / 2, y, x + size / 2, y + size / 4);
-            ctx.quadraticCurveTo(x + size / 2, y, x + size * 3/4, y);
-            ctx.quadraticCurveTo(x + size, y, x + size, y + size / 4);
-            ctx.quadraticCurveTo(x + size, y + size / 2, x + size * 3/4, y + size * 3/4);
-            ctx.lineTo(x + size / 2, y + size);
-            ctx.lineTo(x + size / 4, y + size * 3/4);
-            ctx.quadraticCurveTo(x, y + size / 2, x, y + size / 4);
+            const topCurveHeight = size * 0.3;
+            const middleWidth = size * 0.5; // Ajustado para ser la mitad del tamaño total
+            const tipXOffset = size * 0.5; // Punto central para la punta inferior
+
+            ctx.moveTo(x + tipXOffset, y + size); // Punta inferior del corazón
+            // Curva inferior izquierda
+            ctx.bezierCurveTo(x + size * 0.1, y + size * 0.65, x, y + size * 0.4, x, y + topCurveHeight);
+            // Curva superior izquierda
+            ctx.bezierCurveTo(x, y, x + tipXOffset - size * 0.15, y, x + tipXOffset, y + topCurveHeight * 0.8); // Ajuste para la muesca
+            // Curva superior derecha
+            ctx.bezierCurveTo(x + tipXOffset + size * 0.15, y, x + size, y, x + size, y + topCurveHeight);
+            // Curva inferior derecha
+            ctx.bezierCurveTo(x + size, y + size * 0.4, x + size - size * 0.1, y + size * 0.65, x + tipXOffset, y + size);
+            ctx.closePath();
             ctx.fill();
         }
 
@@ -502,7 +510,8 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
         function animateConfetti() {
             if (!confettiCtx || !confettiCanvas) return;
             confettiCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-            confettiParticles.forEach((p, index) => {
+            
+            confettiParticles = confettiParticles.filter(p => {
                 p.y += p.speedY;
                 p.x += p.speedX;
                 p.angle += p.spin; 
@@ -520,14 +529,13 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                     confettiCtx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
                     confettiCtx.fill();
                 } else if (p.shape === 'heart') {
+                    // El corazón se dibuja desde su esquina superior izquierda imaginaria
                     drawHeart(confettiCtx, -p.size/2, -p.size/2, p.size, p.color);
                 }
                 confettiCtx.restore();
-
-                if (p.y > confettiCanvas.height + p.size) {
-                     confettiParticles.splice(index, 1); 
-                }
+                return !(p.y > confettiCanvas.height + p.size * 2); 
             });
+
             if (confettiParticles.length > 0) {
                 confettiAnimationId = requestAnimationFrame(animateConfetti);
             } else {
@@ -544,7 +552,7 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
 
         function updateInterestMeter() {
             if (interestProgressBar && interestValueText) {
-                mariaInterest = Math.max(0, Math.min(100, mariaInterest)); // Asegurar que esté entre 0 y 100
+                mariaInterest = Math.max(0, Math.min(100, mariaInterest)); 
                 interestProgressBar.style.width = mariaInterest + '%';
                 interestValueText.textContent = mariaInterest;
                 
@@ -637,7 +645,6 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                 confettiShownThisSessionForHighInterest = true;
             }
 
-
             currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings(), mariaInterest); 
 
             const savedConversation = localStorage.getItem('mariaChatConversationHistory');
@@ -661,11 +668,112 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
 
             if (!conversationLoaded || chatHistory.length === 0) {
                  displayMessageInLog(currentGreeting, "model");
+                 // No añadir el saludo al historial aquí, la IA lo generará como su primer mensaje si es necesario.
+                 // chatHistory.push({role: "model", parts: [{text: currentGreeting}]}); // No hacer esto
                  estadoAPIDiv.innerText = "María está esperando... no la hagas rogar. 😈";
+                 startInactivityTimer(); 
             } else {
                  estadoAPIDiv.innerText = "Has vuelto a por más, ¿eh? Me gusta... 😏";
+                 startInactivityTimer(); 
             }
         }
+        
+        function startInactivityTimer() {
+            clearInactivityTimer();
+            if (mariaInterest < 10 || (document.activeElement === preguntaTextarea && preguntaTextarea.value !== "")) {
+                 // No iniciar si el interés es muy bajo o si el usuario está escribiendo activamente
+                return;
+            }
+            inactivityTimerId = setTimeout(() => {
+                enviarMensajeProactivoMaria();
+            }, INACTIVITY_TIMEOUT);
+        }
+
+        function clearInactivityTimer() {
+            if (inactivityTimerId) {
+                clearTimeout(inactivityTimerId);
+                inactivityTimerId = null;
+            }
+        }
+        
+        preguntaTextarea.addEventListener('input', () => {
+            clearInactivityTimer(); // Limpiar al empezar a escribir
+        });
+        preguntaTextarea.addEventListener('blur', () => {
+            if (preguntaTextarea.value === "" && mariaInterest >=10 && !botonEnviar.disabled) { // Si sale del textarea y está vacío
+                 startInactivityTimer();
+            }
+        });
+
+
+        async function enviarMensajeProactivoMaria() {
+            if (botonEnviar.disabled) return; 
+
+            console.log("María enviando mensaje proactivo...");
+            const loadingMessage = "María se impacienta y te escribe...";
+            displayMessageInLog(loadingMessage, "system");
+            botonEnviar.disabled = true;
+            preguntaTextarea.disabled = true;
+
+            const settings = getCurrentSliderSettings();
+            // El prompt del sistema para un mensaje proactivo ya incluye la instrucción de que el usuario tarda.
+            const proactiveSystemPrompt = generateDynamicSystemPrompt(settings, mariaInterest, true); 
+            
+            // Para que la IA genere un mensaje de María, el último turno en el historial enviado a la API debe ser 'user'.
+            // En este caso, el "mensaje del usuario" es implícito (su silencio).
+            // La instrucción para la IA de ser proactiva está en el `proactiveSystemPrompt`.
+            // La API generará el siguiente turno (model) basado en el historial y este prompt.
+            const apiContents = [
+                { role: "user", parts: [{ text: proactiveSystemPrompt }] }, 
+                ...chatHistory,
+                // Añadimos un "disparador" para que la IA sepa que es su turno de hablar.
+                // Este mensaje no se muestra al usuario.
+                { role: "user", parts: [{ text: "(El usuario no responde...)" }] } 
+            ];
+            
+            const payload = { contents: apiContents };
+
+            try {
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`Error de API: ${response.statusText}`);
+                
+                const result = await response.json();
+                const systemMessages = chatLogContainer.querySelectorAll('.system-message');
+                systemMessages.forEach(msg => {
+                    if (msg.innerText.includes("María se impacienta y te escribe...")) {
+                        msg.remove();
+                    }
+                });
+
+                if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    displayMessageInLog(text, "model"); 
+                    chatHistory.push({ role: "model", parts: [{ text: text }] }); 
+                    saveChatHistory(); 
+                    startInactivityTimer(); 
+                }
+            } catch (error) {
+                console.error("Error en mensaje proactivo:", error);
+                const systemMessages = chatLogContainer.querySelectorAll('.system-message');
+                systemMessages.forEach(msg => {
+                    if (msg.innerText.includes("María se impacienta y te escribe...")) {
+                        msg.remove();
+                    }
+                });
+            } finally {
+                 if (mariaInterest >= 10) { 
+                    botonEnviar.disabled = false;
+                    preguntaTextarea.disabled = false;
+                }
+            }
+        }
+
 
         document.addEventListener('DOMContentLoaded', () => {
             loadChatHistory(); 
@@ -678,13 +786,16 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
 
         window.addEventListener('beforeunload', () => {
             clearInterval(timerInterval);
+            clearInactivityTimer();
             saveChatHistory(); 
         });
 
         async function enviarConsulta() {
+            clearInactivityTimer(); 
             const pregunta = preguntaTextarea.value.trim();
             if (!pregunta) {
                 displayMessageInLog("¿Te comió la lengua el gato o es que te intimido demasiado? Venga, suelta. 😏", "system");
+                startInactivityTimer(); 
                 return;
             }
             displayMessageInLog(pregunta, "user");
@@ -694,22 +805,39 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
             botonEnviar.disabled = true;
             preguntaTextarea.disabled = true;
 
-            let interestChange = Math.floor(Math.random() * 9) - 4; 
-            if (pregunta.length > 50) interestChange += Math.floor(Math.random() * 5) + 2; 
-            else if (pregunta.length < 20) interestChange -= Math.floor(Math.random() * 4) + 1; 
-            
-            if (mariaInterest < 20 && interestChange > 0) interestChange = Math.max(1, Math.floor(interestChange / 2));
-            else if (mariaInterest < 20 && interestChange < 0) interestChange = Math.min(-1, Math.floor(interestChange * 1.5));
+            // Lógica de cambio de interés ajustada
+            let interestChange = 0;
+            const preguntaLength = pregunta.length;
 
-            if (mariaInterest > 80 && interestChange < 0) interestChange = Math.floor(interestChange / 2);
-            else if (mariaInterest > 80 && interestChange > 0) interestChange = Math.floor(interestChange * 1.5);
+            if (preguntaLength > 40) { 
+                interestChange = 20; // Sube 20 puntos por mensaje largo y elaborado
+            } else if (preguntaLength > 15) { 
+                interestChange = 10; // Sube 10 puntos por mensaje decente
+            } else if (preguntaLength > 0) { 
+                interestChange = -5;  // Baja 5 puntos por mensaje corto
+            } else { 
+                interestChange = -10; 
+            }
 
+            // Modificadores basados en el interés actual
+            if (mariaInterest < 25 && interestChange > 0) { 
+                interestChange = 10; 
+            } else if (mariaInterest < 25 && interestChange < 0) { 
+                if (interestChange === -5) interestChange = -10; 
+            }
+
+            if (mariaInterest > 75 && interestChange < 0) { 
+                interestChange = -5; 
+            } else if (mariaInterest > 75 && interestChange > 0) { 
+                if (interestChange === 10) interestChange = 20; 
+            }
+            // Fin de la nueva lógica de cambio de interés
 
             mariaInterest += interestChange;
-            mariaInterest = Math.max(0, Math.min(100, mariaInterest)); // Clamp
+            mariaInterest = Math.max(0, Math.min(100, mariaInterest)); 
             updateInterestMeter();
             
-            currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings(), mariaInterest); 
+            currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings(), mariaInterest, false); 
             const userMessageForAPI = { role: "user", parts: [{ text: pregunta }] };
             
             const apiContents = [
@@ -741,9 +869,7 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                     }
                 });
 
-                if (result.candidates && result.candidates.length > 0 &&
-                    result.candidates[0].content && result.candidates[0].content.parts &&
-                    result.candidates[0].content.parts.length > 0) {
+                if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts && result.candidates[0].content.parts.length > 0) {
                     const text = result.candidates[0].content.parts[0].text;
                     displayMessageInLog(text, "model"); 
 
@@ -758,6 +884,7 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                         confettiShownThisSessionForHighInterest = false;
                     }
                     saveChatHistory(); 
+                    startInactivityTimer(); 
                 } else {
                     console.warn("Respuesta inesperada de la API o sin contenido:", result);
                     let errorMessage = "Bah, me has pillado en un momento tonto. Repite, si te atreves. 😈";
@@ -765,6 +892,7 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                         errorMessage = `Parece que te pasaste de listo y me bloqueaste (Razón: ${result.promptFeedback.blockReason})... Intenta con algo menos... obvio, si puedes. 😉`;
                     }
                     displayMessageInLog(errorMessage, "system");
+                    startInactivityTimer(); 
                 }
             } catch (error) {
                 console.error("Error al generar contenido:", error);
@@ -775,12 +903,14 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
                     }
                 });
                 displayMessageInLog("Joder, algo petó. ¿Otra vez? O es que no aguantas mi ritmo. 🔥", "system");
+                startInactivityTimer(); 
             } finally {
                 if (mariaInterest < 10) {
                     preguntaTextarea.disabled = true;
                     botonEnviar.disabled = true;
                     botonEnviar.innerText = "María te ha bloqueado 💔";
                     estadoAPIDiv.innerText = "María ha perdido todo el interés... Adiós.";
+                    clearInactivityTimer(); 
                 } else {
                     botonEnviar.disabled = false;
                     preguntaTextarea.disabled = false;
@@ -792,11 +922,16 @@ Admites que te va la música con ritmo que incite a bailar pegado, las película
         window.enviarConsulta = enviarConsulta;
 
         preguntaTextarea.addEventListener('keydown', function(event) {
+            clearInactivityTimer(); // Limpiar al presionar tecla
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault(); 
                 enviarConsulta();    
             }
         });
+        preguntaTextarea.addEventListener('focus', clearInactivityTimer);
+
+
     </script>
 </body>
 </html>
+�
