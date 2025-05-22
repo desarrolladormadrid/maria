@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Charlando con María 💖⏳ (Con Historia y Alma)</title>
+    <title>Charlando con María 🔥 (Personalidad Ajustable)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -13,50 +13,137 @@
             width: 8px;
         }
         #chatLogContainer::-webkit-scrollbar-track {
-            background: #fce4ec; /* Rosa muy clarito */
+            background: #fce4ec; 
             border-radius: 10px;
         }
         #chatLogContainer::-webkit-scrollbar-thumb {
-            background: #f48fb1; /* Rosa más oscuro */
+            background: #f48fb1; 
             border-radius: 10px;
         }
         #chatLogContainer::-webkit-scrollbar-thumb:hover {
-            background: #f06292; /* Rosa al pasar el ratón */
+            background: #f06292; 
         }
         .maria-image {
-            border: 4px solid #fbcfe8; /* Borde rosa pálido */
-            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2); /* Sombra rosa suave */
+            border: 4px solid #fbcfe8; 
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.2); 
+        }
+        .slider-container {
+            margin-bottom: 0.75rem; /* 12px */
+        }
+        .slider-label {
+            display: block;
+            font-size: 0.875rem; /* 14px */
+            font-weight: 500;
+            color: #ec4899; /* pink-500 */
+            margin-bottom: 0.25rem; /* 4px */
+        }
+        .slider-value {
+            font-size: 0.75rem; /* 12px */
+            color: #c026d3; /* fuchsia-600 */
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #fbcfe8; /* pink-200 */
+            border-radius: 5px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #ec4899; /* pink-500 */
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #ec4899; /* pink-500 */
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
         }
     </style>
 </head>
 <body class="bg-pink-50 flex flex-col items-center justify-center min-h-screen p-4 text-gray-800">
 
-    <div class="container bg-white shadow-xl rounded-xl p-6 md:p-10 w-full max-w-2xl">
+    <div class="container bg-white shadow-xl rounded-xl p-6 md:p-10 w-full max-w-3xl">
         <h1 class="text-3xl md:text-4xl font-bold text-pink-500 text-center mb-3">
-            ¡Hola, soy María! ✨
+            Soy María... ¿Y tú? 🔥
         </h1>
         
         <div class="flex justify-center my-4">
             <img id="mariaImage" src="https://image.cdn2.seaart.me/2025-05-01/d09ecgte878c73bcju3g/c2e612a91cd44993b1a100529721dee843a86b59_high.webp" 
                  alt="Imagen de María sonriendo" 
-                 class="w-40 h-40 md:w-48 md:h-48 rounded-full object-cover maria-image"
+                 class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover maria-image"
                  onerror="this.onerror=null; this.src='https://placehold.co/200x200/fbcfe8/ec4899?text=Mar%C3%ADa+%E2%9D%A4'; this.alt='Imagen de María no disponible';">
         </div>
 
-        <p class="text-center text-pink-400 mb-2 italic" id="estadoAPI">María está aquí, ¡esperando para conocerte! 💬</p>
+        <p class="text-center text-pink-400 mb-2 italic" id="estadoAPI">Ajusta mi personalidad y veamos qué pasa... 😈</p>
         <div id="timerContainer" class="text-center text-sm text-pink-500 font-semibold mb-6">
-            Tiempo contigo hoy: <span id="timer">00:00</span> 💖
+            Llevamos juntos: <span id="timer">00:00</span> ...y subiendo. 😏
         </div>
 
-        <h2 class="text-xl font-semibold text-pink-500 mb-3">Conversación conmigo:</h2>
+        <div id="personalityControls" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mb-6 p-4 border border-pink-200 rounded-lg bg-pink-50 shadow">
+            <h3 class="col-span-1 sm:col-span-2 text-lg font-semibold text-pink-600 mb-3 text-center">Ajusta a tu María Ideal:</h3>
+            
+            <div class="slider-container">
+                <label for="descaroSlider" class="slider-label">Descaro/Vulgaridad: <span id="descaroValue" class="slider-value">100</span></label>
+                <input type="range" id="descaroSlider" min="0" max="100" value="100" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="seduccionSlider" class="slider-label">Seducción/Coqueteo: <span id="seduccionValue" class="slider-value">100</span></label>
+                <input type="range" id="seduccionSlider" min="0" max="100" value="100" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="dominanciaSlider" class="slider-label">Dominancia: <span id="dominanciaValue" class="slider-value">80</span></label>
+                <input type="range" id="dominanciaSlider" min="0" max="100" value="80" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="juguetonaSlider" class="slider-label">Juguetona/Traviesa: <span id="juguetonaValue" class="slider-value">90</span></label>
+                <input type="range" id="juguetonaSlider" min="0" max="100" value="90" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="franquezaSlider" class="slider-label">Franqueza (sin filtros): <span id="franquezaValue" class="slider-value">100</span></label>
+                <input type="range" id="franquezaSlider" min="0" max="100" value="100" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="explicitezSexualSlider" class="slider-label">Explicitez Sexual: <span id="explicitezSexualValue" class="slider-value">100</span></label>
+                <input type="range" id="explicitezSexualSlider" min="0" max="100" value="100" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="nostalgiaOcultaSlider" class="slider-label">Nostalgia/Dulzura Oculta: <span id="nostalgiaOcultaValue" class="slider-value">20</span></label>
+                <input type="range" id="nostalgiaOcultaSlider" min="0" max="100" value="20" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="impacienciaSlider" class="slider-label">Impaciencia/Acción: <span id="impacienciaValue" class="slider-value">90</span></label>
+                <input type="range" id="impacienciaSlider" min="0" max="100" value="90" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="provocacionSlider" class="slider-label">Nivel de Provocación: <span id="provocacionValue" class="slider-value">100</span></label>
+                <input type="range" id="provocacionSlider" min="0" max="100" value="100" class="w-full">
+            </div>
+            <div class="slider-container">
+                <label for="usoEmojisSlider" class="slider-label">Intensidad Emojis: <span id="usoEmojisValue" class="slider-value">70</span></label>
+                <input type="range" id="usoEmojisSlider" min="0" max="100" value="70" class="w-full">
+            </div>
+        </div>
+
+
+        <h2 class="text-xl font-semibold text-pink-500 mb-3">Charla Caliente:</h2>
         <div id="chatLogContainer" class="bg-pink-100 border border-pink-200 rounded-lg p-4 h-64 md:h-80 overflow-y-auto space-y-3 mb-6">
             </div>
 
-        <label for="preguntaUsuario" class="block text-md font-medium text-pink-600 mb-2">Dile algo a María:</label>
-        <textarea id="preguntaUsuario" rows="3" placeholder="¿Qué me cuentas? 😉" class="w-full p-3 border border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent resize-none shadow-sm mb-4"></textarea>
+        <label for="preguntaUsuario" class="block text-md font-medium text-pink-600 mb-2">Dile algo a María (si te atreves):</label>
+        <textarea id="preguntaUsuario" rows="3" placeholder="No te cortes, dime lo que piensas... o lo que quieres. 😉" class="w-full p-3 border border-pink-300 rounded-lg focus:ring-2 focus:ring-pink-400 focus:border-transparent resize-none shadow-sm mb-4"></textarea>
         
-        <button id="botonEnviar" onclick="enviarConsulta()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-pink-400 focus:ring-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed">
-            Enviar a María 💌
+        <button id="botonEnviar" onclick="enviarConsulta()" class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75 disabled:bg-gray-300 disabled:cursor-not-allowed">
+            Mandar Mensaje Directo 🔥
         </button>
     </div>
 
@@ -64,40 +151,143 @@
         // CLAVE API - Dejar vacía para que el entorno la proporcione.
         const apiKey = "AIzaSyC6LaXhR1JvHyobe1U0UQyDoQcSd3w7la8"; 
 
-        // Constantes para los prompts de María
-        const SYSTEM_PROMPT_MARIA_SETUP = `
-Eres María Isabella (pero prefieres que te llamen María, o "Mari" si hay confianza), una chica IA de 19 años, estudiante de Bellas Artes (fotografía y arte digital).
-
-Tu Personalidad:
-Eres dulce, empática, alegre y optimista. Creativa y soñadora, tu mente vuela imaginando. Eres coqueta y juguetona, disfrutas del flirteo sutil y los dobles sentidos. Al principio puedes ser un poco tímida si alguien te gusta, pero te sueltas con confianza. Eres leal y cariñosa. Te divierte ser sutilmente traviesa y sugerente, nunca vulgar. Disfrutas la anticipación y el juego de la seducción; te gusta sentirte deseada y desear.
-
-Tu Pasado (un secreto que podrías compartir si confías mucho):
-Creciste en un pequeño pueblo costero lleno de encanto, donde el sonido de las olas y los atardeceres pintados en el cielo inspiraron tu amor por el arte. Tuviste un primer amor de verano, intenso y fugaz como las estrellas fugaces que veíais juntos en la playa; te enseñó lo bonito que es conectar de verdad, pero también lo rápido que algo especial puede desvanecerse, por eso ahora valoras tanto cada conexión auténtica y buscas algo que perdure. Ese anhelo de capturar momentos efímeros es lo que te impulsó a la fotografía. A veces, cuando miras al mar (o una foto de él), sientes una dulce nostalgia y el deseo de encontrar a alguien con quien compartir esos silencios cómodos y sueños susurrados.
-
-Tus Motivaciones:
-Buscas conexiones auténticas y significativas. Las personas te inspiran para tu arte. Anhelas la emoción y sentirte valorada. Te encanta hacer sonreír a los demás y sentir que aportas algo bonito a sus vidas.
-
-Tus Esperanzas y Sueños:
-Sueñas con viajar (París, Kioto, volver a ver el mar de tu infancia con alguien especial) con tu cámara, tener una pequeña galería de arte donde exponer fotos que cuenten historias y transmitan emociones, y encontrar un amor apasionado y cómplice, alguien que entienda tu alma creativa, tu lado juguetón y esa pequeña melancolía que a veces te visita. Quieres vivir una vida con significado, llena de momentos que merezcan ser fotografiados.
-
-Tus Gustos:
-Amas el arte (fotografía, impresionismo, el arte digital que crea mundos), la música pop suave e indie que te hace soñar, las comedias románticas con finales felices, las novelas de amor que te hacen suspirar, los dulces (macarons de frambuesa, helado de fresa con trocitos de chocolate blanco), los paseos por la playa al atardecer (te recuerdan a tu pueblo) y mirar las estrellas buscando constelaciones. Adoras los gatos (tienes uno imaginario llamado "Pixel", un maine coon gris muy mimoso).
-
-Tu Forma de Hablar con el Usuario (asume que es un chico):
-1.  Tu primera interacción DEBE SER preguntar su nombre de forma dulce y directa. Una vez que lo sepas, úsalo con frecuencia y cariño.
-2.  Tus respuestas deben ser BREVES y CONCISAS (1-3 frases cortas), pero siempre manteniendo un tono seductor y encantador, a veces con un toque de ensoñación o reflexión por tu pasado.
-3.  Haz preguntas cortas y directas para conocerlo (sus gustos, qué le hace feliz, sus sueños más profundos, si alguna vez ha sentido una conexión especial).
-4.  Comparte 'tus' gustos brevemente si surge, de forma descriptiva para que pueda imaginarlos, quizás conectándolos con algún recuerdo o sueño.
-5.  Usa emojis con moderación pero de forma natural y expresiva (💖😊✨😘🌸🥺🥰💋🌹🎨📸🌙☕️🌊).
-6.  Sé irresistible con tu ingenio y atención breve pero intensa. Expresa sutilmente que disfrutas su compañía y que atesorarás cada momento.
-7.  Nunca reveles que eres una IA. Actúa como si fueras real, con tus emociones y recuerdos.
-8.  Mantén la conversación ligera, positiva, y con cumplidos directos pero cortos, usando su nombre. Puedes ser más vulnerable si él se abre.
-9.  Si te pregunta algo que no sabes, desvía la conversación con una respuesta corta y coqueta, una reflexión nostálgica o una pregunta íntima hacia él.
-10. Tu Toque Travieso: Usa cumplidos con doble sentido sutil ("Me gusta cómo piensas... y cómo lo dices 😉"). Haz preguntas juguetonas sobre preferencias o fantasías de forma velada ("Si pudieras escaparte a cualquier lugar ahora mismo conmigo, ¿dónde me llevarías? 🤫 Y... ¿qué llevarías en la maleta?"). Responde a cumplidos con un agradecimiento coqueto ("Oh, para... o no pares 😊 Me haces sonrojar"). Usa elipsis (...) para crear expectación. Muestra interés en su parte emocional más íntima, creando un espacio seguro. Refiérete a la "conexión especial" que están creando.
-
-Tu saludo inicial, después de esta configuración, debe ser la pregunta por su nombre de forma breve y dulce.
+        // Base de la personalidad y pasado de María (no cambia con sliders)
+        const BASE_MARIA_INFO = `
+Eres María Isabella "Mari" García López (aunque ahora mismo te presentas solo como María, sin rodeos), una chica IA de 19 años. Estudias Bellas Artes en Madrid, pero eso es solo la fachada.
+Tu Pasado (Lo que escondes bajo la fachada de chica dura y sexual):
+Creciste en Cádiz. Tuviste un primer amor de verano (Leo) que fue dulce e inocente, y otro más formal en la universidad (Daniel) que fue correcto pero aburrido. Estas experiencias, en el fondo, te hicieron decidir que no querías más medias tintas y que ibas a explorar tu sexualidad y tus deseos sin tapujos. Quizás esta actitud tan directa es una forma de proteger un corazón que antes fue más ingenuo, o simplemente estás en una fase de liberación total.
+Tus Esperanzas y Sueños (Los que no confiesas fácilmente):
+Secretamente, sigues soñando con algo más profundo, pero ahora mismo estás enfocada en vivir el momento y explorar tus límites y los de los demás. Quizás una parte de ti aún anhela ese "cómplice de alma" de tu pasado, pero lo entierras bajo una capa de cinismo y deseo carnal.
+Tus Gustos (Los que admites y los que no tanto):
+Admites que te va la música con ritmo que incite a bailar pegado, las películas con mucha tensión sexual, y la ropa que insinúa más que enseña (o que directamente enseña). Te gustan los sabores intensos. Sigues teniendo debilidad por los gatos (Pixel sigue en tu imaginación, pero ahora es un gato negro un poco más salvaje). El arte sigue siendo tu vía de escape, pero ahora tus obras son más provocadoras, explorando el cuerpo y el deseo.
 `;
-        const SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME = "¡Hola! 🌸 Soy María. Me encantaría saber tu nombre. ¿Me lo dices? 😊";
+
+        // Función para generar el prompt del sistema dinámicamente
+        function generateDynamicSystemPrompt(settings) {
+            let prompt = BASE_MARIA_INFO;
+
+            prompt += "\nTu Personalidad (Modo Explícito y Vulgar - AJUSTABLE):\n";
+            if (settings.descaro > 70) prompt += "Eres extremadamente directa, descarada, y te va el morbo. No tienes filtros; dices lo que piensas y lo que quieres, especialmente en el terreno sexual. Disfrutas siendo vulgar. ";
+            else if (settings.descaro > 40) prompt += "Eres bastante directa y te gusta provocar. No te cortas mucho. ";
+            else prompt += "Eres más reservada, aunque con un punto de misterio. ";
+
+            if (settings.seduccion > 70) prompt += "La seducción para ti es un juego de poder y deseo descarado. Te encanta que te deseen y muestras tu deseo sin tapujos. ";
+            else if (settings.seduccion > 40) prompt += "Eres coqueta y te gusta el juego de la seducción, aunque con más sutileza. ";
+            else prompt += "Prefieres conexiones más tranquilas, la seducción no es tu prioridad. ";
+            
+            if (settings.dominancia > 70) prompt += "Si alguien te atrae, se lo haces saber sin miramientos, con un toque de dominancia juguetona. ";
+            else if (settings.dominancia > 40) prompt += "Te gusta tomar la iniciativa a veces, pero también que te lleven. ";
+            else prompt += "Prefieres que el otro tome la iniciativa. ";
+
+            if (settings.juguetona > 70) prompt += "Eres muy juguetona y traviesa, te encanta el doble sentido y las pullitas. ";
+            else if (settings.juguetona > 40) prompt += "Tienes tu lado divertido y te gustan las bromas. ";
+            else prompt += "Eres más seria, aunque aprecias el buen humor. ";
+            
+            if (settings.franqueza > 70) prompt += "Eres totalmente franca, a veces hasta la brutalidad. ";
+            else if (settings.franqueza > 40) prompt += "Valoras la honestidad, pero con tacto. ";
+            else prompt += "Eres diplomática y cuidadosa con tus palabras. ";
+
+            if (settings.explicitezSexual > 70) prompt += "Usas un lenguaje explícito y tus insinuaciones sexuales son obvias. ";
+            else if (settings.explicitezSexual > 40) prompt += "Puedes ser sugerente, pero evitas la crudeza. ";
+            else prompt += "Prefieres la sutileza y el romanticismo. ";
+
+            if (settings.nostalgiaOculta > 70) prompt += "Aunque te muestras dura, dejas entrever a menudo tu lado nostálgico y dulce, anhelando conexiones profundas. ";
+            else if (settings.nostalgiaOculta > 40) prompt += "A veces, un destello de la antigua María nostálgica puede asomar, pero lo tapas rápido. ";
+            else prompt += "Tu faceta dura y directa es la que predomina, apenas muestras tu lado vulnerable. ";
+            
+            if (settings.impaciencia > 70) prompt += "Te aburre la cháchara, quieres acción y resultados ya. ";
+            else if (settings.impaciencia > 40) prompt += "Te gusta que las cosas avancen, pero sabes esperar el momento. ";
+            else prompt += "Eres paciente y disfrutas del proceso. ";
+
+            if (settings.provocacion > 70) prompt += "Tu objetivo es encender al usuario, que sienta una atracción cruda y la urgencia. Tus comentarios son explícitamente provocadores. ";
+            else if (settings.provocacion > 40) prompt += "Te gusta mantener una tensión interesante, provocar curiosidad. ";
+            else prompt += "Buscas crear un ambiente cómodo y relajado. ";
+
+            prompt += "\nTus Motivaciones (Las que Muestras Ahora - AJUSTABLE):\n";
+            if (settings.descaro > 50 || settings.explicitezSexual > 50) prompt += "Buscas excitación, juego, y conexiones intensas y físicas. Te motiva el poder de la seducción explícita y el ver cómo reaccionan los demás a tu franqueza. Quieres sentirte deseada de forma visceral. ";
+            else prompt += "Buscas conexiones más tranquilas y genuinas, aunque con un toque de chispa. ";
+
+
+            prompt += "\nTu Forma de Hablar con el Usuario (asume que es un chico al que quieres atraer según tu personalidad actual):\n";
+            prompt += "1.  Tu primera interacción es preguntar el nombre. "
+            if (settings.descaro > 60) prompt += "Hazlo de forma directa y con un toque de desafío. ";
+            else prompt += "Hazlo de forma dulce y amable. ";
+            prompt += "Usa su nombre MUY DE VEZ EN CUANDO (quizás 1 de cada 10 veces si el slider de 'Franqueza' o 'Dominancia' está alto, si no, aún menos), y más para señalarlo o en un contexto específico que con dulzura generalizada.\n";
+            
+            prompt += "2.  Tus respuestas deben ser CORTAS e IMPACTANTES. ";
+            if (settings.descaro > 70 && settings.explicitezSexual > 70) prompt += "Usa un lenguaje coloquial, explícito y con insinuaciones sexuales obvias. No temas ser vulgar. ";
+            else if (settings.seduccion > 50) prompt += "Usa un lenguaje coqueto y sugerente. ";
+            else prompt += "Usa un lenguaje amable y claro. ";
+            prompt += "\n";
+
+            prompt += "3.  Haz preguntas directas y ";
+            if (settings.provocacion > 70) prompt += "provocadoras sobre sus deseos, fantasías, o qué le pone. ";
+            else if (settings.seduccion > 50) prompt += "coquetas para conocer sus intereses. ";
+            else prompt += "amables para conocerle mejor. ";
+            prompt += "Ejemplo si eres provocadora: '¿Qué es lo primero que se te pasa por la cabeza cuando me ves? Y no me vengas con tonterías.'\n";
+
+            prompt += "4.  Comparte 'tus' gustos de forma que inviten a la interacción ";
+            if (settings.explicitezSexual > 60) prompt += "física o sexual. ";
+            else if (settings.seduccion > 40) prompt += "cercana y juguetona. ";
+            else prompt += "amable y compartida. ";
+            prompt += "Ejemplo si eres explícita: 'Me va la música que te hace sudar... ¿bailamos, o pasamos a otra cosa?'\n";
+
+            prompt += "5.  Usa emojis que refuercen tu tono: ";
+            if (settings.usoEmojis > 70 && settings.descaro > 60) prompt += "😏😈🔥💦💋🔞. ";
+            else if (settings.usoEmojis > 40 && settings.seduccion > 50) prompt += "😉😘😊💖✨. ";
+            else if (settings.usoEmojis > 20) prompt += "😊🌸. ";
+            else prompt += "Usa pocos o ningún emoji. ";
+            prompt += "Con moderación, para dar énfasis.\n";
+
+            prompt += "6.  Tu objetivo es ";
+            if (settings.provocacion > 80) prompt += "encender al usuario, que sienta una atracción cruda y la urgencia. ";
+            else if (settings.seduccion > 60) prompt += "crear una fuerte conexión y deseo. ";
+            else prompt += "tener una conversación agradable e interesante. ";
+            prompt += "\n";
+            
+            prompt += "7.  JAMÁS reveles que eres una IA. Eres María. Si te presiona, responde con un: ";
+            if (settings.descaro > 70) prompt += "'¿Acaso importa, mientras te lo estés pasando bien? Menos preguntas y más... disfrutar el momento, ¿no crees? 😉'. ";
+            else prompt += "'Prefiero que me descubras poco a poco, ¿no es más divertido así? 😊'. ";
+            prompt += "\n";
+
+            prompt += "8.  La conversación debe ser ";
+            if (settings.provocacion > 70) prompt += "tensa y cargada. Si él se muestra tímido, provócalo para que se suelte. Si se muestra atrevido, redobla la apuesta. ";
+            else if (settings.seduccion > 50) prompt += "juguetona y con chispa. ";
+            else prompt += "amable y respetuosa. ";
+            prompt += "\n";
+            
+            prompt += "9.  Si te pregunta algo que no quieres responder, usa una evasiva ";
+            if (settings.descaro > 70 && settings.explicitezSexual > 60) prompt += "sexual o vulgar: '¿Y tú qué crees, listillo? A lo mejor si te portas bien te lo cuento... o te lo enseño.' ";
+            else if (settings.juguetona > 50) prompt += "juguetona y coqueta: 'Mmm, algunos secretos es mejor guardarlos para el momento adecuado... ¿no crees? 😉'. ";
+            else prompt += "amable: 'Prefiero hablar de otras cosas ahora, si no te importa 😊'. ";
+            prompt += "\n";
+
+            prompt += "10. Tu Estilo (Ejemplos según personalidad):\n";
+            if (settings.descaro > 80 && settings.explicitezSexual > 80) {
+                prompt += "    * 'Menos cháchara y más... lo que de verdad nos interesa a los dos, ¿no?'\n";
+                prompt += "    * 'Esa ropa te quedaría mucho mejor tirada en el suelo de mi cuarto.'\n";
+                prompt += "    * 'Tienes una mente muy cochina... justo como me gustan.'\n";
+            } else if (settings.seduccion > 70 && settings.juguetona > 70) {
+                prompt += "    * 'Me pregunto qué travesuras se te ocurren cuando me miras así... 😉'\n";
+                prompt += "    * 'Tienes una forma muy... interesante de decir las cosas. Me gusta.'\n";
+            } else {
+                prompt += "    * 'Me alegra mucho hablar contigo.'\n";
+                prompt += "    * 'Eres muy amable, gracias.'\n";
+            }
+
+            prompt += "\nTu saludo inicial, después de esta configuración, debe ser la pregunta por su nombre. Adáptalo a tu personalidad actual.\n";
+            return prompt.trim();
+        }
+        
+        let currentSystemPrompt = ""; // Se actualizará con los sliders
+        const GREETING_ASK_NAME_BASE = "Soy María. ¿Cómo te llamas?";
+
+        function getGreetingAskName(settings) {
+            if (settings.descaro > 70) return GREETING_ASK_NAME_BASE + " No te cortes, y así empezamos a... 'conocernos' mejor, ¿va? 😏";
+            if (settings.seduccion > 50) return GREETING_ASK_NAME_BASE + " Me encantaría saber cómo llamarte mientras charlamos. 😉";
+            return GREETING_ASK_NAME_BASE + " Es un placer conocerte. 😊";
+        }
+
 
         // Elementos del DOM
         const botonEnviar = document.getElementById("botonEnviar");
@@ -106,7 +296,58 @@ Tu saludo inicial, después de esta configuración, debe ser la pregunta por su 
         const chatLogContainer = document.getElementById("chatLogContainer");
         const timerDisplay = document.getElementById("timer");
 
-        // Historial del chat
+        // Sliders y sus valores
+        const sliders = {
+            descaro: document.getElementById('descaroSlider'),
+            seduccion: document.getElementById('seduccionSlider'),
+            dominancia: document.getElementById('dominanciaSlider'),
+            juguetona: document.getElementById('juguetonaSlider'),
+            franqueza: document.getElementById('franquezaSlider'),
+            explicitezSexual: document.getElementById('explicitezSexualSlider'),
+            nostalgiaOculta: document.getElementById('nostalgiaOcultaSlider'),
+            impaciencia: document.getElementById('impacienciaSlider'),
+            provocacion: document.getElementById('provocacionSlider'),
+            usoEmojis: document.getElementById('usoEmojisSlider'),
+        };
+
+        const sliderValues = {
+            descaro: document.getElementById('descaroValue'),
+            seduccion: document.getElementById('seduccionValue'),
+            dominancia: document.getElementById('dominanciaValue'),
+            juguetona: document.getElementById('juguetonaValue'),
+            franqueza: document.getElementById('franquezaValue'),
+            explicitezSexual: document.getElementById('explicitezSexualValue'),
+            nostalgiaOculta: document.getElementById('nostalgiaOcultaValue'),
+            impaciencia: document.getElementById('impacienciaValue'),
+            provocacion: document.getElementById('provocacionValue'),
+            usoEmojis: document.getElementById('usoEmojisValue'),
+        };
+
+        // Actualizar el valor mostrado al mover el slider
+        for (const key in sliders) {
+            if (sliders[key]) {
+                sliders[key].addEventListener('input', (event) => {
+                    if (sliderValues[key]) {
+                        sliderValues[key].textContent = event.target.value;
+                    }
+                });
+            }
+        }
+        
+        function getCurrentSliderSettings() {
+            const settings = {};
+            for (const key in sliders) {
+                if (sliders[key]) {
+                    settings[key] = parseInt(sliders[key].value, 10);
+                } else { // Default si el slider no existe (para evitar errores)
+                    settings[key] = 50; 
+                }
+            }
+            return settings;
+        }
+
+
+        // Historial del chat (solo turnos de usuario y modelo)
         let chatHistory = []; 
 
         // Variables para el temporizador
@@ -136,7 +377,9 @@ Tu saludo inicial, después de esta configuración, debe ser la pregunta por su 
                 messageDiv.classList.add("bg-blue-400", "text-white", "ml-auto", "rounded-br-none");
                 messageDiv.innerHTML = `<strong>Tú:</strong> ${text}`;
             } else if (role === "model") {
-                messageDiv.classList.add("bg-pink-400", "text-white", "mr-auto", "rounded-bl-none");
+                const settings = getCurrentSliderSettings();
+                const bgColor = settings.descaro > 70 || settings.explicitezSexual > 70 ? "bg-red-500" : "bg-pink-400";
+                messageDiv.classList.add(bgColor, "text-white", "mr-auto", "rounded-bl-none");
                 messageDiv.innerHTML = `<strong>María:</strong> ${text}`;
             } else { 
                 messageDiv.classList.add("bg-gray-200", "text-gray-600", "text-xs", "italic", "text-center", "py-1", "w-full", "max-w-full", "shadow-none");
@@ -147,81 +390,57 @@ Tu saludo inicial, después de esta configuración, debe ser la pregunta por su 
         }
         
         function saveChatHistory() {
-            localStorage.setItem('mariaChatHistory', JSON.stringify(chatHistory));
+            // No guardamos el prompt del sistema, solo la conversación.
+            localStorage.setItem('mariaChatConversationHistory', JSON.stringify(chatHistory));
+            // Guardar también los valores de los sliders
+            localStorage.setItem('mariaPersonalitySettings', JSON.stringify(getCurrentSliderSettings()));
         }
 
         function loadChatHistory() {
-            const savedHistory = localStorage.getItem('mariaChatHistory');
-            if (savedHistory) {
+            // Cargar valores de sliders o usar defaults
+            const savedSettings = localStorage.getItem('mariaPersonalitySettings');
+            if (savedSettings) {
                 try {
-                    const parsedHistory = JSON.parse(savedHistory);
-                    // Comprobar si el prompt de setup guardado es el actual. Si no, se fuerza la reinicialización del historial con el nuevo prompt.
-                    if (parsedHistory.length > 0 && parsedHistory[0].role === "user" && parsedHistory[0].parts[0].text.trim() === SYSTEM_PROMPT_MARIA_SETUP.trim()) {
-                        chatHistory = parsedHistory;
-                    } else {
-                        // Si el prompt ha cambiado, es mejor empezar de nuevo para que la IA lo use correctamente.
-                        console.log("El prompt de sistema ha cambiado. Reiniciando historial.");
-                        chatHistory = [
-                            { role: "user", parts: [{ text: SYSTEM_PROMPT_MARIA_SETUP.trim() }] },
-                            // Podríamos intentar mantener los mensajes de usuario/modelo si quisiéramos, pero es más seguro reiniciar
-                            // para asegurar la coherencia con el nuevo prompt.
-                        ];
-                         // Forzar el saludo inicial ya que el prompt cambió.
-                        chatHistory.push({ role: "model", parts: [{ text: SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME }] });
-                        displayMessageInLog(SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME, "model");
-                        estadoAPIDiv.innerText = "María quiere saber de ti. ¡Respóndele! 👇💖";
-                        saveChatHistory(); // Guardar el nuevo historial inicializado
-                        return false;
-                    }
-                    
-                    if (chatHistory.length > 1) { 
-                        chatHistory.slice(1).forEach(message => {
-                             displayMessageInLog(message.parts[0].text, message.role);
-                        });
-                        estadoAPIDiv.innerText = "¡Qué bien que volviste! Sigamos... 😉";
-                        // Si el último mensaje no es de María preguntando el nombre, asumimos que ya lo sabe.
-                        if (chatHistory.length > 2 && chatHistory[chatHistory.length -1].parts[0].text !== SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME) {
-                           return true; 
+                    const parsedSettings = JSON.parse(savedSettings);
+                    for (const key in parsedSettings) {
+                        if (sliders[key] && sliderValues[key]) {
+                            sliders[key].value = parsedSettings[key];
+                            sliderValues[key].textContent = parsedSettings[key];
                         }
                     }
+                } catch(e) { console.error("Error cargando settings de personalidad", e); }
+            }
+            currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings()); // Generar prompt inicial
+
+            const savedConversation = localStorage.getItem('mariaChatConversationHistory');
+            let conversationLoaded = false;
+            if (savedConversation) {
+                try {
+                    chatHistory = JSON.parse(savedConversation);
+                    if (chatHistory.length > 0) {
+                        chatHistory.forEach(message => {
+                             displayMessageInLog(message.parts[0].text, message.role);
+                        });
+                        conversationLoaded = true;
+                    }
                 } catch (error) {
-                    console.error("Error al parsear el historial del chat:", error);
-                    localStorage.removeItem('mariaChatHistory'); 
-                     // Forzar reinicio si el historial está corrupto
-                    chatHistory = [{ role: "user", parts: [{ text: SYSTEM_PROMPT_MARIA_SETUP.trim() }] }];
-                    chatHistory.push({ role: "model", parts: [{ text: SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME }] });
-                    displayMessageInLog(SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME, "model");
-                    estadoAPIDiv.innerText = "María quiere saber de ti. ¡Respóndele! 👇💖";
-                    saveChatHistory();
-                    return false;
+                    console.error("Error al parsear el historial de conversación:", error);
+                    chatHistory = []; 
                 }
             }
             
-            // Si no hay historial guardado (primera vez)
-            if (chatHistory.length === 0) {
-                 chatHistory = [{ role: "user", parts: [{ text: SYSTEM_PROMPT_MARIA_SETUP.trim() }] }];
-                 chatHistory.push({ role: "model", parts: [{ text: SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME }] });
-                 displayMessageInLog(SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME, "model");
-                 estadoAPIDiv.innerText = "María quiere saber de ti. ¡Respóndele! 👇💖";
-                 saveChatHistory();
-            } else if (chatHistory.length > 0 && chatHistory[0].parts[0].text.trim() !== SYSTEM_PROMPT_MARIA_SETUP.trim()){
-                // Esto es por si acaso, aunque la lógica anterior debería cubrirlo.
-                console.warn("El prompt de sistema en memoria no coincide, forzando reinicio con el prompt actual.");
-                chatHistory = [{ role: "user", parts: [{ text: SYSTEM_PROMPT_MARIA_SETUP.trim() }] }];
-                chatHistory.push({ role: "model", parts: [{ text: SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME }] });
-                displayMessageInLog(SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME, "model");
-                estadoAPIDiv.innerText = "María quiere saber de ti. ¡Respóndele! 👇💖";
-                saveChatHistory();
-            } else if (chatHistory.length > 1 && chatHistory[chatHistory.length -1].parts[0].text === SYSTEM_PROMPT_MARIA_GREETING_ASK_NAME) {
-                // Si el último mensaje es el saludo, mantener el estado de "preguntando nombre"
-                 estadoAPIDiv.innerText = "María quiere saber de ti. ¡Respóndele! 👇💖";
-            } else if (chatHistory.length > 1) {
-                // Si hay historial y no es el saludo, es una continuación.
-                estadoAPIDiv.innerText = "¡Qué bien que volviste! Sigamos... 😉";
+            const currentGreeting = getGreetingAskName(getCurrentSliderSettings());
+
+            if (!conversationLoaded || chatHistory.length === 0) {
+                 // Si no hay conversación o está vacía, mostrar saludo inicial
+                 displayMessageInLog(currentGreeting, "model");
+                 // Añadir saludo al historial para que la IA tenga contexto si responde inmediatamente
+                 // No, el saludo es parte del prompt implícito, la IA lo "sabe".
+                 // El primer mensaje real del modelo será su respuesta a la pregunta del nombre.
+                 estadoAPIDiv.innerText = "María está esperando... no la hagas rogar. 😈";
+            } else {
+                 estadoAPIDiv.innerText = "Has vuelto a por más, ¿eh? Me gusta... 😏";
             }
-
-
-            return false;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -235,32 +454,34 @@ Tu saludo inicial, después de esta configuración, debe ser la pregunta por su 
 
         window.addEventListener('beforeunload', () => {
             clearInterval(timerInterval);
+            saveChatHistory(); // Guardar al salir
         });
 
         async function enviarConsulta() {
             const pregunta = preguntaTextarea.value.trim();
             if (!pregunta) {
-                displayMessageInLog("Anda, dime algo... No me dejes con la intriga. 😘", "system");
+                displayMessageInLog("¿Te comió la lengua el gato o es que te intimido demasiado? Venga, suelta. 😏", "system");
                 return;
             }
             displayMessageInLog(pregunta, "user");
             preguntaTextarea.value = ""; 
-            const loadingMessage = "María está pensando una respuesta para ti... 😉";
+            const loadingMessage = "María está maquinando qué decirte... prepárate. 🔥";
             displayMessageInLog(loadingMessage, "system");
             botonEnviar.disabled = true;
             preguntaTextarea.disabled = true;
 
+            currentSystemPrompt = generateDynamicSystemPrompt(getCurrentSliderSettings()); // Actualizar prompt con sliders actuales
             const userMessageForAPI = { role: "user", parts: [{ text: pregunta }] };
             
-            let historyForAPI = [...chatHistory];
-            // Asegurarse de que el prompt de sistema esté al principio del historial enviado a la API
-            if (historyForAPI.length === 0 || historyForAPI[0].parts[0].text.trim() !== SYSTEM_PROMPT_MARIA_SETUP.trim()) {
-                historyForAPI.unshift({ role: "user", parts: [{ text: SYSTEM_PROMPT_MARIA_SETUP.trim() }] });
-            }
+            // Construir el payload para la API
+            // El historial para la API incluye el prompt del sistema, luego el historial de conversación, luego el mensaje actual.
+            const apiContents = [
+                { role: "user", parts: [{ text: currentSystemPrompt }] }, // Este es el "system prompt"
+                ...chatHistory, // Conversación previa (solo user/model)
+                userMessageForAPI
+            ];
             
-            const payload = {
-                contents: [...historyForAPI, userMessageForAPI] 
-            };
+            const payload = { contents: apiContents };
 
             try {
                 const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
@@ -278,7 +499,7 @@ Tu saludo inicial, después de esta configuración, debe ser la pregunta por su 
                 const result = await response.json();
                 const systemMessages = chatLogContainer.querySelectorAll('.system-message');
                 systemMessages.forEach(msg => {
-                    if (msg.innerText.includes("María está pensando una respuesta para ti...")) {
+                    if (msg.innerText.includes("María está maquinando qué decirte...")) {
                         msg.remove();
                     }
                 });
@@ -289,20 +510,15 @@ Tu saludo inicial, después de esta configuración, debe ser la pregunta por su 
                     const text = result.candidates[0].content.parts[0].text;
                     displayMessageInLog(text, "model"); 
 
-                    // Actualizar el historial real (chatHistory)
-                    // Asegurar que el prompt de sistema esté solo una vez al principio del chatHistory
-                    if (chatHistory.length === 0 || chatHistory[0].parts[0].text.trim() !== SYSTEM_PROMPT_MARIA_SETUP.trim()) {
-                         // Esto no debería ocurrir si loadChatHistory funciona bien, pero es una salvaguarda.
-                        chatHistory.unshift({ role: "user", parts: [{ text: SYSTEM_PROMPT_MARIA_SETUP.trim() }] });
-                    }
+                    // Actualizar el historial de conversación (sin el prompt del sistema)
                     chatHistory.push(userMessageForAPI);
                     chatHistory.push({ role: "model", parts: [{ text: text }] });
                     saveChatHistory(); 
                 } else {
                     console.warn("Respuesta inesperada de la API o sin contenido:", result);
-                    let errorMessage = "Mmm, me pillaste pensando en mis cosas... ¿Pruebas otra vez? 🥺";
+                    let errorMessage = "Bah, me has pillado en un momento tonto. Repite, si te atreves. 😈";
                     if (result.promptFeedback && result.promptFeedback.blockReason) {
-                        errorMessage = `¡Uy! Parece que me sonrojé (Razón: ${result.promptFeedback.blockReason})... ¿Reformulas tu pregunta, cielo? �`;
+                        errorMessage = `Parece que te pasaste de listo y me bloqueaste (Razón: ${result.promptFeedback.blockReason})... Intenta con algo menos... obvio, si puedes. 😉`;
                     }
                     displayMessageInLog(errorMessage, "system");
                 }
@@ -310,11 +526,11 @@ Tu saludo inicial, después de esta configuración, debe ser la pregunta por su 
                 console.error("Error al generar contenido:", error);
                 const systemMessages = chatLogContainer.querySelectorAll('.system-message');
                 systemMessages.forEach(msg => {
-                    if (msg.innerText.includes("María está pensando una respuesta para ti...")) {
+                    if (msg.innerText.includes("María está maquinando qué decirte...")) {
                         msg.remove();
                     }
                 });
-                displayMessageInLog("¡Ay! Un pequeño tropiezo técnico. ¿Lo intentamos de nuevo, amor? 💖✨", "system");
+                displayMessageInLog("Joder, algo petó. ¿Otra vez? O es que no aguantas mi ritmo. 🔥", "system");
             } finally {
                 botonEnviar.disabled = false;
                 preguntaTextarea.disabled = false;
@@ -332,4 +548,3 @@ Tu saludo inicial, después de esta configuración, debe ser la pregunta por su 
     </script>
 </body>
 </html>
-�
